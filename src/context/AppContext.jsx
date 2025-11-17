@@ -1,29 +1,59 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
-// Crear el contexto
 const AppContext = createContext();
 
-// Hook personalizado para usar el contexto
 export const useAppContext = () => useContext(AppContext);
 
-// Proveedor del contexto
 export const AppProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    name: 'Estudiante UP',
-    email: 'prestamocm@up.edu.mx',
-  });
+  const { user: auth0User, isAuthenticated, isLoading, logout, loginWithRedirect } = useAuth0();
 
+  // Estado local para guardar al usuario final ya procesado
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // ----------- Configuración global adicional (tuya) -------------
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const [themeColor, setThemeColor] = useState('#b4893e');
-
-  // Puedes agregar aquí cualquier otra variable global
+  const [themeColor, setThemeColor] = useState("#b4893e");
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
+  // ----------- PROCESAR al usuario cuando Auth0 cambie -----------
+  useEffect(() => {
+    if (isAuthenticated && auth0User) {
+      const processedUser = {
+        name: auth0User.name,
+        email: auth0User.email,
+        picture: auth0User.picture,
+      };
+
+      setUser(processedUser);
+
+      // Validar si es admin (email o claim)
+      const adminEmails = ["admin@up.edu.mx"];
+
+      const userIsAdmin =
+        adminEmails.includes(auth0User.email) ||
+        auth0User?.["https://up.edu.mx/role"] === "admin";
+
+      setIsAdmin(userIsAdmin);
+    } else {
+      setUser(null);
+      setIsAdmin(false);
+    }
+  }, [isAuthenticated, auth0User]);
 
   return (
     <AppContext.Provider
       value={{
+        // AUTH
         user,
-        setUser,
+        isAuthenticated,
+        isLoading,
+        isAdmin,
+        loginWithRedirect,
+        logout,
+
+        // UI GLOBAL
         drawerOpen,
         toggleDrawer,
         themeColor,
