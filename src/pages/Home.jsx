@@ -25,7 +25,7 @@ export default function Home() {
 
       <Grid container spacing={3} justifyContent="center">
         {options.map((opt) => (
-          <Grid item key={opt.title}>
+          <Grid key={opt.title}>
             <CardOption {...opt} onClick={() => navigate(opt.path)} />
           </Grid>
         ))}

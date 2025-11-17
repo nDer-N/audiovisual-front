@@ -4,6 +4,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemButton,
   IconButton,
   Box,
   Toolbar,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import {
   Menu as MenuIcon,
-  Close as CloseIcon, // 👈 usamos este ícono para la "X"
+  Close as CloseIcon, 
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
@@ -31,7 +32,7 @@ export default function SideMenu() {
 
   return (
     <>
-      {/* Botón hamburguesa / cerrar */}
+      
       <IconButton
         color="inherit"
         onClick={handleDrawerToggle}
@@ -46,17 +47,17 @@ export default function SideMenu() {
           transition: 'all 0.3s ease',
         }}
       >
-        {open ? <CloseIcon /> : <MenuIcon />} {/* 👈 cambia el ícono */}
+        {open ? <CloseIcon /> : <MenuIcon />} 
       </IconButton>
 
-      {/* Drawer colapsable */}
+      
       <Drawer
         variant="temporary"
         anchor="left"
         open={open}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // mejora rendimiento en móviles
+          keepMounted: true, 
         }}
         sx={{
           '& .MuiDrawer-paper': {
@@ -71,19 +72,18 @@ export default function SideMenu() {
 
         <List>
           {menuItems.map((item) => (
-            <ListItem
-              button
+            <ListItemButton
               key={item.text}
               component={Link}
               to={item.path}
-              onClick={handleDrawerToggle} // cierra el menú al hacer clic
+              onClick={handleDrawerToggle} 
               sx={{
                 color: 'black',
                 '&:hover': { backgroundColor: '#f0f0f0' },
               }}
             >
               <ListItemText primary={item.text} />
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
       </Drawer>

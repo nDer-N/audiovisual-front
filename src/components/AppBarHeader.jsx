@@ -4,7 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function AppBarHeader() {
-   const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+   const { user, loginWithRedirect, logout, isAuthenticated} = useAppContext();
   return (
     <AppBar position="static" sx={{ bgcolor: '#b4893e', boxShadow: 'none' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
