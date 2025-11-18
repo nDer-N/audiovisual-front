@@ -1,10 +1,16 @@
-import { AppBar, Toolbar, Typography, InputBase, Box, Avatar } from '@mui/material';
+import { AppBar, Toolbar, InputBase, Box, Avatar } from '@mui/material'; 
 import SearchIcon from '@mui/icons-material/Search';
 import { useAppContext } from '../context/AppContext';
-import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
 
 export default function AppBarHeader() {
-   const { user, loginWithRedirect, logout, isAuthenticated} = useAppContext();
+  const { user, loginWithRedirect, isAuthenticated } = useAppContext();
+  const navigate = useNavigate();
+
+  const handleAvatarClick = () => {
+    navigate('/Usuario');
+  };
+
   return (
     <AppBar position="static" sx={{ bgcolor: '#b4893e', boxShadow: 'none' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -15,10 +21,10 @@ export default function AppBarHeader() {
 
         {isAuthenticated ? (
           <Avatar
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+            onClick={handleAvatarClick}
             sx={{ bgcolor: 'white', color: '#b4893e', cursor: 'pointer' }}
-            alt={user.name}
-            src={user.picture}
+            alt={user?.name}
+            src={user?.picture}
           />
         ) : (
           <Avatar
@@ -30,3 +36,4 @@ export default function AppBarHeader() {
     </AppBar>
   );
 }
+

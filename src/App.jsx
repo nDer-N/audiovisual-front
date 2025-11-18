@@ -15,6 +15,8 @@ import ReservarSalones from "./pages/ReservarSalones";
 import MisReservas from "./pages/MisReservas";
 import FAQ from "./pages/FAQ";
 
+import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
+
 export default function App() {
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
@@ -42,6 +44,7 @@ export default function App() {
             <Route path="/reservar-salones" element={<ReservarSalones />} />
             <Route path="/mis-reservas" element={<MisReservas />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/Usuario" element={<Usuario />} />
           </Routes>
         </Box>
 
@@ -50,3 +53,4 @@ export default function App() {
     </Box>
   );
 }
+
