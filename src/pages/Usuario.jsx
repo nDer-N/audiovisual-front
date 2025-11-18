@@ -18,9 +18,10 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { useAppContext } from "../context/AppContext";
 import { useNavigate, useLocation } from "react-router";
+import Home from "./Home";
 
 export default function PerfilUsuario() {
-  const { user, logout } = useAppContext();
+  const { user, logout, isAdmin } = useAppContext();
    const location = useLocation();
   const navigate = useNavigate();
 
@@ -28,7 +29,90 @@ export default function PerfilUsuario() {
     navigate('/'); // redirige a Home.jsx
   };
 
-  return (
+ return isAdmin ? (
+  <Box
+    sx={{
+      display: "flex",
+      gap: 8,
+      padding: "40px",
+      bgcolor: "#f3eee5",
+      minHeight: "100vh",
+      position: "relative",
+    }}
+  >
+    {/* CAMPANA */}
+    <IconButton sx={{ position: "absolute", top: 30, right: 40 }}>
+      <NotificationsNoneIcon sx={{ fontSize: 35 }} />
+    </IconButton>
+
+    {/* IZQUIERDA */}
+    <Box
+      sx={{
+        width: "35%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+      }}
+    >
+      <Avatar
+        sx={{
+          position: "relative",
+          width: 530,
+          height: 530,
+          right: -700,
+          bgcolor: "black",
+          mb: 3,
+        }}
+        src={user.picture}
+      />
+
+      <Typography sx={{ fontSize: "26px", fontWeight: "500", position: "relative", right: -700 }}>
+        Detalles del perfil
+      </Typography>
+
+      {/* BOTÓN LOGOUT */}
+      <IconButton
+        sx={{
+          position: "relative",
+          margin: "10px",
+          display: "flex",
+          right: -700,
+          bgcolor: "white",
+          boxShadow: 3,
+        }}
+        onClick={() =>
+          logout({
+            logoutParams: { returnTo: window.location.origin },
+          })
+        }
+      >
+        <LogoutIcon sx={{ fontSize: 30 }} />
+      </IconButton>
+
+      {/* RETURN BUTTON */}
+      <Button
+        onClick={handleGoHome}
+        variant="outlined"
+        startIcon={<ArrowBackIosNewIcon />}
+        sx={{
+          position: "relative",
+          width: "290px",
+          right: -700,
+          mt: 4,
+          textTransform: "none",
+          color: "#1d1d8f",
+          borderColor: "#1d1d8f",
+        }}
+      >
+        Return to main page
+      </Button>
+    </Box>
+
+    
+  </Box>
+) :(
     <Box
       sx={{
         display: "flex",
