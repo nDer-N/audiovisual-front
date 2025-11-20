@@ -7,6 +7,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import productos from './productos';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 
 
@@ -15,8 +17,14 @@ export default function Itempage() {
     const producto = productos.find((p) => p.id === Number(id));
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
-     const [openTerms, setOpenTerms] = useState(false);
+    const [openTerms, setOpenTerms] = useState(false);
+    const [acepto, setAcepto] = useState(false);
+    const [cantida, setCantidad] = React.useState(1);
     const fechactual = dayjs();
+    const navigate = useNavigate();
+    const handleClick = (id) => {
+        navigate(`/confirmacion/${id}`);
+    };
 
 
     return (
@@ -25,9 +33,9 @@ export default function Itempage() {
                 <Box
                     sx={{
                         backgroundColor: "#fafafa",
-                        padding: 30,
-                        borderRadius: 30,
-                        boxShadow: 30
+                        padding: 15,
+                        borderRadius: 15,
+                        boxShadow: 15
                     }}
                 >
                     <img
@@ -81,6 +89,27 @@ export default function Itempage() {
                         <br /> 2. Lee Y Acepta Términos Y Condiciones
                         <br /> 3. Agrega Al Carrito
                     </Typography>
+                    <Typography sx={{ mt: 3 }} fontWeight="bold">
+                        Cantidad:
+                    </Typography>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1 }}>
+                        <Button
+                            variant="outlined"
+                            onClick={() => setCantidad(prev => Math.max(1, prev - 1))}
+                        >
+                            -
+                        </Button>
+
+                        <Typography>{cantida}</Typography>
+
+                        <Button
+                            variant="outlined"
+                            onClick={() => setCantidad(prev => Math.min(producto.cantidad, prev + 1))}
+                        >
+                            +
+                        </Button>
+                    </Box>
                 </Box>
                 <Box
                     sx={{
@@ -96,7 +125,25 @@ export default function Itempage() {
                     <Button variant="contained" onClick={() => setOpenTerms(true)}>
                         Leer términos y condiciones
                     </Button>
-                    <Button variant="contained" sx={{ paddingX: 4 }}>
+                    <Button
+                        variant="contained"
+                        sx={{ paddingX: 4 }}
+                        onClick={() => {
+                            if (!selectedDate) {
+                                alert("Debes elegir una fecha antes de continuar.");
+                                return;
+                            }
+                            if (!acepto) {
+                                alert("Debes aceptar los términos y condiciones.");
+                                return;
+                            }
+                            else {
+                                handleClick(id);
+                            }
+
+
+                        }}
+                    >
                         Agregar a Carrito
                     </Button>
                 </Box>
@@ -117,20 +164,59 @@ export default function Itempage() {
                                 Fecha seleccionada: {JSON.stringify(selectedDate)}
                             </Typography>
                         )}
-                        <Button variant='contained' sx={{mt:4}} onClick={()=>setShowCalendar(false)}>Hecho</Button>
+                        <Button variant='contained' sx={{ mt: 4 }} onClick={() => setShowCalendar(false)}>Hecho</Button>
                     </Box>
 
                 )}
-                {openTerms &&(
-                    <Box sx={{mt:2, backgroundColor: "#fafafa",
-                        padding: 3,
-                        borderRadius: 3,
-                        boxShadow: 3}}>
-                        <Typography sx={{mt:1}}>
-                            Usted se compromete a regresar los materiales que pida prestados sin ningun rasguño y en las mejores condiciones que se puedan pedir
-                        </Typography>
-                        <Button variant='contained' sx={{mt:3}} onClick={()=>setOpenTerms(false)}>Acepto</Button>
-                    </Box>
+                {openTerms && (
+                    <Dialog
+                        open={openTerms}
+                        onClose={() => setOpenTerms(false)}
+                        slotProps={{
+                            paper: {
+                                sx: {
+                                    borderRadius: 3,
+                                    padding: 2,
+                                    backgroundColor: "#ffffff",
+                                    width: "500px",
+                                }
+                            }
+                        }}
+                    >
+                        <DialogTitle sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>
+                            Términos y Condiciones
+                        </DialogTitle>
+
+                        <DialogContent>
+                            <Typography sx={{ mt: 1, lineHeight: 1.6 }}>
+                                Usted se compromete a regresar los materiales que pida prestados
+                                sin ningún rasguño y en las mejores condiciones posibles.
+                                Cualquier daño podrá generar una sanción o costo adicional.
+                            </Typography>
+
+                            <Box sx={{ display: "flex", alignItems: "center", mt: 3 }}>
+                                <input
+                                    type="checkbox"
+                                    id="acepto"
+                                    onChange={(e) => setAcepto(e.target.checked)}
+                                    style={{ transform: "scale(1.3)", marginRight: "10px" }}
+                                />
+                                <label htmlFor="acepto" style={{ fontSize: "1rem" }}>
+                                    Acepto las condiciones
+                                </label>
+                            </Box>
+
+                            <Button
+                                variant="contained"
+                                sx={{ mt: 3 }}
+                                disabled={!acepto}
+                                onClick={() => setOpenTerms(false)}
+                                fullWidth
+                            >
+                                Confirmar
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
                 )}
             </Grid>
 
