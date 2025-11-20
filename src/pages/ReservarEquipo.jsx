@@ -27,7 +27,6 @@ export default function ReservarEquipo() {
             sx={{
               borderRadius: 3,
               boxShadow: 3,
-              height:350,
               width:"100%",
               backgroundColor: "#f4f0e8"
             }}
@@ -35,7 +34,7 @@ export default function ReservarEquipo() {
             <CardActionArea onClick={() => handleClick(pro.id)}>
               <CardMedia
                 component="img"
-                height="220"
+                height="420"
                 image={pro.img}
                 alt={pro.nombre}
                 sx={{ objectFit: "contain", padding: 4, margin: "15 auto", width: "auto" }}
