@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import productos from './productos';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from '../context/AppContext';
 
 
 
@@ -22,6 +23,7 @@ export default function Itempage() {
     const [cantida, setCantidad] = React.useState(1);
     const fechactual = dayjs();
     const navigate = useNavigate();
+    const { setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
     };
@@ -119,10 +121,10 @@ export default function Itempage() {
                         gap: 2
                     }}
                 >
-                    <Button variant="contained" sx={{ paddingX: 4 }} onClick={() => setShowCalendar(!showCalendar)} >
+                    <Button variant="contained" sx={{ paddingX: 4, backgroundColor: selectedDate ? "#4caf50" : undefined }} onClick={() => setShowCalendar(!showCalendar)} >
                         Calendario de Reservas
                     </Button>
-                    <Button variant="contained" onClick={() => setOpenTerms(true)}>
+                    <Button variant="contained" sx={{ paddingX: 4, backgroundColor: acepto ? "#4caf50" : undefined }} onClick={() => setOpenTerms(true)}>
                         Leer términos y condiciones
                     </Button>
                     <Button
@@ -138,6 +140,11 @@ export default function Itempage() {
                                 return;
                             }
                             else {
+                                setReser({
+                                    id: producto.id,
+                                    fecha: selectedDate,
+                                    cantidad: cantida
+                                });
                                 handleClick(id);
                             }
 

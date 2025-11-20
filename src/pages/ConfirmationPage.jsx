@@ -3,11 +3,15 @@ import { useParams } from "react-router-dom";
 import { Grid, Box, Typography, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import productos from './productos';
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from '../context/AppContext';
+
 
 export default function ConfirmationPage() {
     const { id } = useParams();
     const producto = productos.find((p) => p.id === Number(id));
     const navigate = useNavigate();
+    const { reser } = useAppContext();
+    console.log(reser);
     return (
         <Grid container spacing={4} sx={{ padding: 4 }}>
             <Grid>
