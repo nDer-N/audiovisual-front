@@ -7,14 +7,7 @@ export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
   const { user: auth0User, isAuthenticated, isLoading, logout, loginWithRedirect } = useAuth0();
-  const [reser, setReser] = useState({
-    id: null,
-    fecha: null,
-    cantidad: 1,
-    dia: null,
-    mes: null,
-    año: null 
-  });
+  const [reser, setReser] = useState([]);
   const [nuevoproducto, setNuevoProducto]=useState({
     id: null,
     nombre:"",

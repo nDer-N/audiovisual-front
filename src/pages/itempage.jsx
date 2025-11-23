@@ -26,6 +26,9 @@ export default function Itempage({ catal }) {
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
     };
+    const agregarReserva = (nueva) => {
+        setReser(prev => [...prev, nueva]);
+    };
 
 
     return (
@@ -142,7 +145,7 @@ export default function Itempage({ catal }) {
                                 const dia = parseInt(selectedDate.date(), 10);
                                 const mes = parseInt(selectedDate.month() + 1, 10);
                                 const año = parseInt(selectedDate.year(), 10);
-                                setReser({
+                                agregarReserva({
                                     id: producto.id,
                                     fecha: selectedDate,
                                     cantidad: cantida,
