@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 export default function EquipmentAdmin({ catal, setCatal }) {
   const navigate = useNavigate();
-  const { isAdmin, nuevoproducto } = useAppContext();
+  const { isAdmin, nuevoproducto, setNuevoProducto } = useAppContext();
   console.log(nuevoproducto);
 
   const eliminarProducto = (id) => {
@@ -37,9 +37,16 @@ export default function EquipmentAdmin({ catal, setCatal }) {
         img: nuevoproducto.imagen
       }];
     });
+    setNuevoProducto({
+      id: null,
+      nombre: "",
+      descripcion: "",
+      imagen: null,
+      cantidad: 1
+    });
   }, [nuevoproducto]);
 
-  return  isAdmin ?  (
+  return isAdmin ? (
     <Box p={4}>
       <Grid container spacing={7} justifyContent="center">
         {catal.map((item) => (
@@ -122,5 +129,5 @@ export default function EquipmentAdmin({ catal, setCatal }) {
         </Button>
       </Grid>
     </Box>
-  ): (<Box></Box>);
+  ) : (<Box></Box>);
 }
