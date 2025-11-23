@@ -5,7 +5,6 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import productos from './productos';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
@@ -13,9 +12,9 @@ import { useAppContext } from '../context/AppContext';
 
 
 
-export default function Itempage() {
+export default function Itempage({ catal }) {
     const { id } = useParams();
-    const producto = productos.find((p) => p.id === Number(id));
+    const producto = catal.find((p) => p.id === Number(id));
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
@@ -140,10 +139,16 @@ export default function Itempage() {
                                 return;
                             }
                             else {
+                                const dia = parseInt(selectedDate.date(), 10);
+                                const mes = parseInt(selectedDate.month() + 1, 10);
+                                const año = parseInt(selectedDate.year(), 10);
                                 setReser({
                                     id: producto.id,
                                     fecha: selectedDate,
-                                    cantidad: cantida
+                                    cantidad: cantida,
+                                    dia: dia,
+                                    mes: mes,
+                                    año: año
                                 });
                                 handleClick(id);
                             }
