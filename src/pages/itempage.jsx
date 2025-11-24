@@ -151,7 +151,10 @@ export default function Itempage({ catal }) {
                                     cantidad: cantida,
                                     dia: dia,
                                     mes: mes,
-                                    año: año
+                                    año: año,
+                                    nombre: producto.nombre,
+                                    descripcion: producto.descripcion,
+                                    imagen: producto.img
                                 });
                                 handleClick(id);
                             }
