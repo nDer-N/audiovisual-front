@@ -34,15 +34,15 @@ export default function EquipmentAdmin({ catal, setCatal }) {
 
       return [...prev, {
         ...nuevoproducto,
-        img: nuevoproducto.imagen
+        img: nuevoproducto.image
       }];
     });
     setNuevoProducto({
       id: null,
-      nombre: "",
-      descripcion: "",
-      imagen: null,
-      cantidad: 1
+      name: "",
+      description: "",
+      image: null,
+      quantity: 1
     });
   }, [nuevoproducto]);
 
@@ -92,14 +92,14 @@ export default function EquipmentAdmin({ catal, setCatal }) {
               <CardMedia
                 component="img"
                 image={item.img}
-                alt={item.nombre}
+                alt={item.name}
                 sx={{ height: 420, objectFit: 'contain', cursor: 'pointer', borderRadius: 2 }}
                 onClick={() => irADetalle(item.id)}
               />
 
               <CardContent>
                 <Typography textAlign="center" fontWeight="bold" mt={1}>
-                  {item.nombre}
+                  {item.name}
                 </Typography>
               </CardContent>
             </Card>

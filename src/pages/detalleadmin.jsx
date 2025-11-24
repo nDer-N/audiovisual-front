@@ -20,7 +20,7 @@ export default function DetalleAdmin({catal}) {
                 >
                     <img
                         src={producto.img}
-                        alt={producto.nombre}
+                        alt={producto.name}
                         style={{
                             width: "100%",
                             height: "auto",
@@ -57,11 +57,11 @@ export default function DetalleAdmin({catal}) {
                     }}
                 >
                     <Typography variant="h5" fontWeight="bold">
-                        {producto.nombre}
+                        {producto.name}
                     </Typography>
 
                     <Typography sx={{ mt: 2 }}>
-                        {producto.descripcion}
+                        {producto.description}
                     </Typography>
                     <Typography sx={{ mt: 3 }} fontWeight="bold">
                         Cantidad:
@@ -69,7 +69,7 @@ export default function DetalleAdmin({catal}) {
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1 }}>
 
-                        <Typography>{producto.cantidad}</Typography>
+                        <Typography>{producto.quantity}</Typography>
                     </Box>
                 </Box>
             </Grid>

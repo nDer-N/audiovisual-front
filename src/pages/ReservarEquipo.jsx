@@ -37,12 +37,12 @@ export default function ReservarEquipo({catal}) {
                 component="img"
                 height="420"
                 image={pro.img}
-                alt={pro.nombre}
+                alt={pro.name}
                 sx={{ objectFit: "contain", padding: 4, margin: "15 auto", width: "auto" }}
               />
               <CardContent sx={{ textAlign: "center" }}>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  {pro.nombre}
+                  {pro.name}
                 </Typography>
               </CardContent>
             </CardActionArea>

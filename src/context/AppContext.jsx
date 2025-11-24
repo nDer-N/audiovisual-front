@@ -10,10 +10,10 @@ export const AppProvider = ({ children }) => {
   const [reser, setReser] = useState([]);
   const [nuevoproducto, setNuevoProducto]=useState({
     id: null,
-    nombre:"",
-    descripcion:"",
-    imagen:null,
-    cantidad:1
+    name:"",
+    description:"",
+    image:null,
+    quantity:1
   })
 
 
@@ -38,7 +38,7 @@ export const AppProvider = ({ children }) => {
       setUser(processedUser);
 
       // Validar si es admin (email o claim)
-      const adminEmails = ["admin@up.edu.mx"];
+      const adminEmails = ["admin@up.edu.mx","0262138@up.edu.mx"];
 
       const userIsAdmin =
         adminEmails.includes(auth0User.email) ||

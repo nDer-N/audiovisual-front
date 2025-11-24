@@ -33,10 +33,10 @@ export default function AgregarEquipo() {
 
     const nuevoproducto = {
       id: Number(agregarid),
-      nombre: agregarnombre,
-      descripcion: agregardescripcion,
-      cantidad: Number(agregarCantidad),
-      imagen: previewimagen,
+      name: agregarnombre,
+      description: agregardescripcion,
+      quantity: Number(agregarCantidad),
+      image: previewimagen,
     };
 
     setNuevoProducto(nuevoproducto);
@@ -48,6 +48,7 @@ export default function AgregarEquipo() {
       sx={{
         display: "flex",
         justifyContent: "center",
+        alignItems:"center",
         padding: 5,
         backgroundColor: "#f5efe5",
         minHeight: "100vh",
@@ -55,7 +56,8 @@ export default function AgregarEquipo() {
     >
       <Paper
         sx={{
-          width: "700px",
+          width: "800px",
+          minHeight: "600px",
           padding: 4,
           borderRadius: 4,
           boxShadow: 5,

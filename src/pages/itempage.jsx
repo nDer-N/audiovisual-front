@@ -147,14 +147,14 @@ export default function Itempage({ catal }) {
                                 const año = parseInt(selectedDate.year(), 10);
                                 agregarReserva({
                                     id: producto.id,
-                                    fecha: selectedDate,
-                                    cantidad: cantida,
-                                    dia: dia,
-                                    mes: mes,
-                                    año: año,
-                                    nombre: producto.nombre,
-                                    descripcion: producto.descripcion,
-                                    imagen: producto.img
+                                    date: selectedDate,
+                                    quantity: cantida,
+                                    day: dia,
+                                    month: mes,
+                                    year: año,
+                                    name: producto.name,
+                                    description: producto.description,
+                                    image: producto.img
                                 });
                                 handleClick(id);
                             }
