@@ -7,6 +7,15 @@ export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
   const { user: auth0User, isAuthenticated, isLoading, logout, loginWithRedirect } = useAuth0();
+  const [reser, setReser] = useState([]);
+  const [nuevoproducto, setNuevoProducto]=useState({
+    id: null,
+    name:"",
+    description:"",
+    image:null,
+    quantity:1
+  })
+
 
   // Estado local para guardar al usuario final ya procesado
   const [user, setUser] = useState(null);
@@ -29,7 +38,7 @@ export const AppProvider = ({ children }) => {
       setUser(processedUser);
 
       // Validar si es admin (email o claim)
-      const adminEmails = ["admin@up.edu.mx"];
+      const adminEmails = ["admin@up.edu.mx","0262138@up.edu.mx"];
 
       const userIsAdmin =
         adminEmails.includes(auth0User.email) ||
@@ -58,6 +67,10 @@ export const AppProvider = ({ children }) => {
         toggleDrawer,
         themeColor,
         setThemeColor,
+        reser,
+        setReser,
+        nuevoproducto,
+        setNuevoProducto
       }}
     >
       {children}

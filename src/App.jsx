@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useAppContext } from "./context/AppContext";
+import { useState } from "react";
 
 import AppBarHeader from "./components/AppBarHeader";
 import SideMenu from "./components/SideMenu";
@@ -14,10 +15,18 @@ import ReservarEquipo from "./pages/ReservarEquipo";
 import ReservarSalones from "./pages/ReservarSalones";
 import MisReservas from "./pages/MisReservas";
 import FAQ from "./pages/FAQ";
+import Itempage from "./pages/itempage";
+import ConfirmationPage from "./pages/ConfirmationPage";
+import EquipmentAdmin from "./pages/EquipmentAdmin";
+import productos from "./pages/productos";
+import DetalleAdmin from "./pages/detalleadmin";
+import EditarEquipo from "./pages/editarequipo";
+import AgregarEquipo from "./pages/agregarequipo";
 
 export default function App() {
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
+  const [catal, setCatal] = useState(productos);
 
   if (isLoading) return <p>Cargando...</p>;
 
@@ -38,9 +47,18 @@ export default function App() {
         <Box sx={{ p: 3, minHeight: "80vh", position: "relative" }}>
           <Routes location={location}>
             <Route path="/" element={<Home />} />
-            <Route path="/reservar-equipo" element={<ReservarEquipo />} />
+            <Route path="/reservar-equipo" element={<ReservarEquipo catal={catal} />} />
             <Route path="/reservar-salones" element={<ReservarSalones />} />
             <Route path="/mis-reservas" element={<MisReservas />} />
+            <Route path="/producto/:id" element={<Itempage catal={catal} />} />
+            <Route path="/confirmacion/:id" element={<ConfirmationPage />} />
+            <Route path="/gestionar-equipo" element={<EquipmentAdmin catal={catal} setCatal={setCatal} />} />
+            <Route path="/detalle-equipo/:id" element={<DetalleAdmin catal={catal} />} />
+            <Route path="/edicion/:id" element={<EditarEquipo catal={catal} setCatal={setCatal} />} />
+            <Route path="/agregar-producto" element={<AgregarEquipo catal={catal} setCatal={setCatal} />} />
+            <Route path="/gestionar-salones" />
+            <Route path="/revisar-peticiones" />
+            <Route path="/perfiles" />
             <Route path="/faq" element={<FAQ />} />
           </Routes>
         </Box>
