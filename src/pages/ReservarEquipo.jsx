@@ -4,10 +4,11 @@ import { Box, Grid, Card, CardActionArea, CardMedia, CardContent } from '@mui/ma
 
 import { useNavigate } from 'react-router';
 import productos from './productos';
+import App from '../App';
 
 
 
-export default function ReservarEquipo() {
+export default function ReservarEquipo({catal}) {
   const navigate = useNavigate();
 
   const handleClick = (id) => {
@@ -21,7 +22,7 @@ export default function ReservarEquipo() {
       justifyContent="center"
       sx={{ padding: "20px" }}
     >
-      {productos.map((pro) => (
+      {catal.map((pro) => (
         <Grid key={pro.id}>
           <Card
             sx={{
@@ -36,12 +37,12 @@ export default function ReservarEquipo() {
                 component="img"
                 height="420"
                 image={pro.img}
-                alt={pro.nombre}
+                alt={pro.name}
                 sx={{ objectFit: "contain", padding: 4, margin: "15 auto", width: "auto" }}
               />
               <CardContent sx={{ textAlign: "center" }}>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  {pro.nombre}
+                  {pro.name}
                 </Typography>
               </CardContent>
             </CardActionArea>

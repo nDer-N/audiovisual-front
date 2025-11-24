@@ -24,7 +24,7 @@ export default function ConfirmationPage() {
                     }}>
                     <img
                         src={producto.img}
-                        alt={producto.nombre}
+                        alt={producto.name}
                         style={{
                             width: "100%",
                             height: "auto",

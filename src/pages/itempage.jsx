@@ -5,7 +5,6 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import productos from './productos';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
@@ -13,9 +12,9 @@ import { useAppContext } from '../context/AppContext';
 
 
 
-export default function Itempage() {
+export default function Itempage({ catal }) {
     const { id } = useParams();
-    const producto = productos.find((p) => p.id === Number(id));
+    const producto = catal.find((p) => p.id === Number(id));
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
@@ -26,6 +25,9 @@ export default function Itempage() {
     const { setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
+    };
+    const agregarReserva = (nueva) => {
+        setReser(prev => [...prev, nueva]);
     };
 
 
@@ -140,10 +142,19 @@ export default function Itempage() {
                                 return;
                             }
                             else {
-                                setReser({
+                                const dia = parseInt(selectedDate.date(), 10);
+                                const mes = parseInt(selectedDate.month() + 1, 10);
+                                const año = parseInt(selectedDate.year(), 10);
+                                agregarReserva({
                                     id: producto.id,
-                                    fecha: selectedDate,
-                                    cantidad: cantida
+                                    date: selectedDate,
+                                    quantity: cantida,
+                                    day: dia,
+                                    month: mes,
+                                    year: año,
+                                    name: producto.name,
+                                    description: producto.description,
+                                    image: producto.img
                                 });
                                 handleClick(id);
                             }
