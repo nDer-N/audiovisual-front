@@ -22,11 +22,15 @@ import productos from "./pages/productos";
 import DetalleAdmin from "./pages/detalleadmin";
 import EditarEquipo from "./pages/editarequipo";
 import AgregarEquipo from "./pages/agregarequipo";
+import salones from "./pages/salones";
+import SalonesPage from "./pages/salonespage";
+import ConfirmarSalon from "./pages/confirmarsalon";
 
 export default function App() {
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
   const [catal, setCatal] = useState(productos);
+  const [cotol,setCotol]=useState(salones);
 
   if (isLoading) return <p>Cargando...</p>;
 
@@ -48,7 +52,9 @@ export default function App() {
           <Routes location={location}>
             <Route path="/" element={<Home />} />
             <Route path="/reservar-equipo" element={<ReservarEquipo catal={catal} />} />
-            <Route path="/reservar-salones" element={<ReservarSalones />} />
+            <Route path="/reservar-salones" element={<ReservarSalones cotol={cotol} />} />
+            <Route path="/salon/:id" element={<SalonesPage cotol={cotol}/>}/>
+            <Route path="/confirmacion-del-salon/:id" element={<ConfirmarSalon />} />
             <Route path="/mis-reservas" element={<MisReservas />} />
             <Route path="/producto/:id" element={<Itempage catal={catal} />} />
             <Route path="/confirmacion/:id" element={<ConfirmationPage />} />
