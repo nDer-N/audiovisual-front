@@ -14,7 +14,13 @@ export const AppProvider = ({ children }) => {
     description:"",
     image:null,
     quantity:1
-  })
+  });
+  const [nuevosalon, setNuevoSalon]=useState({
+    id: null,
+    name:"",
+    description:"",
+    image:null
+  });
 
 
   // Estado local para guardar al usuario final ya procesado
@@ -38,7 +44,7 @@ export const AppProvider = ({ children }) => {
       setUser(processedUser);
 
       // Validar si es admin (email o claim)
-      const adminEmails = ["admin@up.edu.mx"];
+      const adminEmails = ["admin@up.edu.mx","0262138@up.edu.mx"];
 
       const userIsAdmin =
         adminEmails.includes(auth0User.email) ||
@@ -70,7 +76,9 @@ export const AppProvider = ({ children }) => {
         reser,
         setReser,
         nuevoproducto,
-        setNuevoProducto
+        setNuevoProducto,
+        nuevosalon,
+        setNuevoSalon
       }}
     >
       {children}
