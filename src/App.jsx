@@ -31,6 +31,8 @@ import DetalleSalonAdmin from "./pages/detallesalonadmin";
 import RevisarPeticiones from "./pages/revisarpeticiones";
 import PeticionesProductos from "./pages/peticionesproductos";
 import PeticionesSalones from "./pages/peticionessalones";
+import Profiles from "./pages/profiles";
+import InformProfiles from "./pages/informprofiles";
 
 import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
 
@@ -77,7 +79,8 @@ export default function App() {
             <Route path="/revisar-peticiones" element={<RevisarPeticiones />}/>
             <Route path="/peticiones-salones" element={<PeticionesSalones cotol={cotol} setCotol={setCotol} />}/>
             <Route path="/peticiones-productos" element={<PeticionesProductos catal={catal} setCatal={setCatal}/>}/>
-            <Route path="/perfiles" />
+            <Route path="/perfiles" element={<Profiles/>}/>
+            <Route path="/informacio-de-los-perfiles/:id" element={<InformProfiles/>}/>
             <Route path="/faq" element={<FAQ />} />
             <Route path="/Usuario" element={<Usuario />} />
           </Routes>
