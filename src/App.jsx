@@ -53,7 +53,7 @@ export default function App() {
   console.log(catal);
 
   async function loadUser(user) { 
-   const {name, email, image }=user;
+   const {name, email, picture }=user;
    try {
     const res = await fetch("http://localhost:8000/api/users", {
       method: "POST",
