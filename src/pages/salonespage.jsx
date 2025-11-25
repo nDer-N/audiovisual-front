@@ -18,7 +18,7 @@ export default function SalonesPage({ cotol }) {
     const [acepto, setAcepto] = useState(false);
     const fechactual = dayjs();
     const navigate = useNavigate();
-    const { setReser } = useAppContext();
+    const { user, setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion-del-salon/${id}`);
     };
@@ -128,7 +128,8 @@ export default function SalonesPage({ cotol }) {
                                     year: año,
                                     name: salones.name,
                                     description: salones.description,
-                                    image: salones.img
+                                    image: salones.img,
+                                    user: user?.email ?? "desconocido"
                                 });
                                 handleClick(id);
                             }

@@ -22,7 +22,7 @@ export default function Itempage({ catal }) {
     const [cantida, setCantidad] = React.useState(1);
     const fechactual = dayjs();
     const navigate = useNavigate();
-    const { setReser } = useAppContext();
+    const { user, setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
     };
@@ -154,7 +154,8 @@ export default function Itempage({ catal }) {
                                     year: año,
                                     name: producto.name,
                                     description: producto.description,
-                                    image: producto.img
+                                    image: producto.img,
+                                    user: user?.email ?? "desconocido"
                                 });
                                 handleClick(id);
                             }
