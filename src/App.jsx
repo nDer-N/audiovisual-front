@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useAppContext } from "./context/AppContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import AppBarHeader from "./components/AppBarHeader";
 import SideMenu from "./components/SideMenu";
@@ -18,7 +18,7 @@ import FAQ from "./pages/FAQ";
 import Itempage from "./pages/itempage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import EquipmentAdmin from "./pages/EquipmentAdmin";
-import productos from "./pages/productos";
+import {getProductos} from "./pages/productos";
 import DetalleAdmin from "./pages/detalleadmin";
 import EditarEquipo from "./pages/editarequipo";
 import AgregarEquipo from "./pages/agregarequipo";
@@ -37,8 +37,19 @@ import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
 export default function App() {
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
-  const [catal, setCatal] = useState(productos);
-  const [cotol,setCotol]=useState(salones);
+  
+  const [catal, setCatal] = useState([]);
+  const [cotol,setCotol]=useState([]);
+  useEffect(() => {
+    async function loadProductos() {
+      const data = await getProductos(); // ← aquí ya es el arreglo real
+      setCatal(data);
+    }
+    loadProductos();
+  }, [location.pathname]);
+
+  console.log(catal);
+  
 
   if (isLoading) return <p>Cargando...</p>;
 

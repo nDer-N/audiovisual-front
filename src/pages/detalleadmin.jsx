@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 export default function DetalleAdmin({catal}) {
     const { id } = useParams();
-    const producto = catal.find((p) => p.id === Number(id));
+    const producto = catal.find((p) => p._id === id);
+    console.log("PERRO");
+    console.log(producto);
     const navigate = useNavigate();
 
     return (

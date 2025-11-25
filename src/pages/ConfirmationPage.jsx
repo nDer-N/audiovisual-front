@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams } from "react-router-dom";
 import { Grid, Box, Typography, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
-import productos from './productos';
+
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
 

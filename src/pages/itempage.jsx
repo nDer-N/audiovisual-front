@@ -14,7 +14,8 @@ import { useAppContext } from '../context/AppContext';
 
 export default function Itempage({ catal }) {
     const { id } = useParams();
-    const producto = catal.find((p) => p.id === Number(id));
+    const producto = catal.find(p => p._id === id);
+    console.log(producto);
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);

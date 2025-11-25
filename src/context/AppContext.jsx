@@ -44,7 +44,7 @@ export const AppProvider = ({ children }) => {
       setUser(processedUser);
 
       // Validar si es admin (email o claim)
-      const adminEmails = ["admin@up.edu.mx",];
+      const adminEmails = ["admin@up.edu.mx", "0262371@up.edu.mx"];
 
       const userIsAdmin =
         adminEmails.includes(auth0User.email) ||
