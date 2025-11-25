@@ -14,7 +14,13 @@ export const AppProvider = ({ children }) => {
     description:"",
     image:null,
     quantity:1
-  })
+  });
+  const [nuevosalon, setNuevoSalon]=useState({
+    id: null,
+    name:"",
+    description:"",
+    image:null
+  });
 
 
   // Estado local para guardar al usuario final ya procesado
@@ -70,7 +76,9 @@ export const AppProvider = ({ children }) => {
         reser,
         setReser,
         nuevoproducto,
-        setNuevoProducto
+        setNuevoProducto,
+        nuevosalon,
+        setNuevoSalon
       }}
     >
       {children}

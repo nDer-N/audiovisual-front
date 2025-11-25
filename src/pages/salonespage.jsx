@@ -9,22 +9,18 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
 
-
-
-
-export default function Itempage({ catal }) {
-    const { id } = useParams();
-    const producto = catal.find((p) => p.id === Number(id));
+export default function SalonesPage({ cotol }) {
+   const { id } = useParams();
+    const salones = cotol.find((p) => p.id === Number(id));
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
     const [acepto, setAcepto] = useState(false);
-    const [cantida, setCantidad] = React.useState(1);
     const fechactual = dayjs();
     const navigate = useNavigate();
     const { user, setReser } = useAppContext();
     const handleClick = (id) => {
-        navigate(`/confirmacion/${id}`);
+        navigate(`/confirmacion-del-salon/${id}`);
     };
     const agregarReserva = (nueva) => {
         setReser(prev => [...prev, nueva]);
@@ -43,8 +39,8 @@ export default function Itempage({ catal }) {
                     }}
                 >
                     <img
-                        src={producto.img}
-                        alt={producto.name}
+                        src={salones.img}
+                        alt={salones.name}
                         style={{
                             width: "100%",
                             height: "auto",
@@ -80,11 +76,11 @@ export default function Itempage({ catal }) {
                     }}
                 >
                     <Typography variant="h5" fontWeight="bold">
-                        {producto.name}
+                        {salones.name}
                     </Typography>
 
                     <Typography sx={{ mt: 2 }}>
-                        {producto.description}
+                        {salones.description}
                     </Typography>
 
                     <Typography sx={{ mt: 2 }}>
@@ -93,27 +89,6 @@ export default function Itempage({ catal }) {
                         <br /> 2. Lee Y Acepta Términos Y Condiciones
                         <br /> 3. Agrega Al Carrito
                     </Typography>
-                    <Typography sx={{ mt: 3 }} fontWeight="bold">
-                        Cantidad:
-                    </Typography>
-
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1 }}>
-                        <Button
-                            variant="outlined"
-                            onClick={() => setCantidad(prev => Math.max(1, prev - 1))}
-                        >
-                            -
-                        </Button>
-
-                        <Typography>{cantida}</Typography>
-
-                        <Button
-                            variant="outlined"
-                            onClick={() => setCantidad(prev => Math.min(producto.quantity, prev + 1))}
-                        >
-                            +
-                        </Button>
-                    </Box>
                 </Box>
                 <Box
                     sx={{
@@ -146,15 +121,14 @@ export default function Itempage({ catal }) {
                                 const mes = parseInt(selectedDate.month() + 1, 10);
                                 const año = parseInt(selectedDate.year(), 10);
                                 agregarReserva({
-                                    id: producto.id,
+                                    id: salones.id,
                                     date: selectedDate,
-                                    quantity: cantida,
                                     day: dia,
                                     month: mes,
                                     year: año,
-                                    name: producto.name,
-                                    description: producto.description,
-                                    image: producto.img,
+                                    name: salones.name,
+                                    description: salones.description,
+                                    image: salones.img,
                                     user: user?.email ?? "desconocido"
                                 });
                                 handleClick(id);
@@ -208,9 +182,9 @@ export default function Itempage({ catal }) {
 
                         <DialogContent>
                             <Typography sx={{ mt: 1, lineHeight: 1.6 }}>
-                                Usted se compromete a regresar los materiales que pida prestados
-                                sin ningún rasguño y en las mejores condiciones posibles.
-                                Cualquier daño podrá generar una sanción o costo adicional.
+                                Usted se compromete a no dañar de ninguna manera la instalacion que
+                                tomo prestada y que al momento de hacer su devolucion
+                                esta este en el mismo estado como la recibio.
                             </Typography>
 
                             <Box sx={{ display: "flex", alignItems: "center", mt: 3 }}>
