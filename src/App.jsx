@@ -64,7 +64,7 @@ export default function App() {
         name,
         email,
         warnings:[],
-        img:image
+        img:picture
       })
     });
 
