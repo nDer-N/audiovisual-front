@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useAppContext } from "./context/AppContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import AppBarHeader from "./components/AppBarHeader";
 import SideMenu from "./components/SideMenu";
@@ -33,10 +33,20 @@ import PeticionesProductos from "./pages/peticionesproductos";
 import PeticionesSalones from "./pages/peticionessalones";
 import Profiles from "./pages/profiles";
 import InformProfiles from "./pages/informprofiles";
+import {getUsers} from "./pages/users";
 
 import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
 
 export default function App() {
+   const [users, setUsers]=useState(); 
+   useEffect(() => {
+    async function loadUsers() {
+      const data = await getUsers(); // ← aquí ya es el arreglo real
+      setUsers(data);
+    }
+    loadUsers();
+  }, []);
+
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
   const [catal, setCatal] = useState(productos);
@@ -79,7 +89,7 @@ export default function App() {
             <Route path="/revisar-peticiones" element={<RevisarPeticiones />}/>
             <Route path="/peticiones-salones" element={<PeticionesSalones cotol={cotol} setCotol={setCotol} />}/>
             <Route path="/peticiones-productos" element={<PeticionesProductos catal={catal} setCatal={setCatal}/>}/>
-            <Route path="/perfiles" element={<Profiles/>}/>
+            <Route path="/perfiles" element={<Profiles users={users}/> }/>
             <Route path="/informacio-de-los-perfiles/:id" element={<InformProfiles/>}/>
             <Route path="/faq" element={<FAQ />} />
             <Route path="/Usuario" element={<Usuario />} />

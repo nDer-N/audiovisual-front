@@ -1,12 +1,14 @@
 import React from "react";
 import { Box, Grid, Typography, Card, CardActionArea } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import users from "../pages/users"; // importa el archivo users.js
+import {useState, useEffect} from 'react';
+ // importa el archivo users.js
 
-export default function Profiles() {
+export default function Profiles({users}) {
+   
     const navigate = useNavigate();
-    const handleClick = (id) => {
-    navigate(`/informacio-de-los-perfiles/${id}`);
+    const handleClick = (_id) => {
+    navigate(`/informacio-de-los-perfiles/${_id}`);
   };
 
     return (
@@ -44,7 +46,7 @@ export default function Profiles() {
                                     {/* Imagen del usuario */}
                                     <Box
                                         component="img"
-                                        src={user.image}
+                                        src={user.img}
                                         alt={user.name}
                                         sx={{
                                             width: 70,
