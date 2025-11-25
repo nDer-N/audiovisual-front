@@ -28,6 +28,9 @@ import ConfirmarSalon from "./pages/confirmarsalon";
 import SalonesAdmin from "./pages/salonesadmin";
 import AgregarSalon from "./pages/agregarsalon";
 import DetalleSalonAdmin from "./pages/detallesalonadmin";
+import RevisarPeticiones from "./pages/revisarpeticiones";
+import PeticionesProductos from "./pages/peticionesproductos";
+import PeticionesSalones from "./pages/peticionessalones";
 
 export default function App() {
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
@@ -69,7 +72,9 @@ export default function App() {
             <Route path="/edicion/:id" element={<EditarEquipo catal={catal} setCatal={setCatal} />} />
             <Route path="/agregar-producto" element={<AgregarEquipo catal={catal} setCatal={setCatal} />} />
             <Route path="/gestionar-salones" />
-            <Route path="/revisar-peticiones" />
+            <Route path="/revisar-peticiones" element={<RevisarPeticiones />}/>
+            <Route path="/peticiones-salones" element={<PeticionesSalones cotol={cotol} setCotol={setCotol} />}/>
+            <Route path="/peticiones-productos" element={<PeticionesProductos catal={catal} setCatal={setCatal}/>}/>
             <Route path="/perfiles" />
             <Route path="/faq" element={<FAQ />} />
           </Routes>
