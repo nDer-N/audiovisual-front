@@ -25,6 +25,9 @@ import AgregarEquipo from "./pages/agregarequipo";
 import salones from "./pages/salones";
 import SalonesPage from "./pages/salonespage";
 import ConfirmarSalon from "./pages/confirmarsalon";
+import SalonesAdmin from "./pages/salonesadmin";
+import AgregarSalon from "./pages/agregarsalon";
+import DetalleSalonAdmin from "./pages/detallesalonadmin";
 
 export default function App() {
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
@@ -55,6 +58,9 @@ export default function App() {
             <Route path="/reservar-salones" element={<ReservarSalones cotol={cotol} />} />
             <Route path="/salon/:id" element={<SalonesPage cotol={cotol}/>}/>
             <Route path="/confirmacion-del-salon/:id" element={<ConfirmarSalon />} />
+            <Route path="/gestionar-salones" element={<SalonesAdmin cotol={cotol} setCotol={setCotol} />} />
+            <Route path="/agregar-salones" element={<AgregarSalon cotol={cotol} setCotol={setCotol} />} />
+            <Route path="/detalle-salon/:id" element={<DetalleSalonAdmin cotol={cotol} />} />
             <Route path="/mis-reservas" element={<MisReservas />} />
             <Route path="/producto/:id" element={<Itempage catal={catal} />} />
             <Route path="/confirmacion/:id" element={<ConfirmationPage />} />
