@@ -33,7 +33,7 @@ export default function Home() {
     : [
       { title: 'Reservar Equipo', image: meme, path: '/reservar-equipo' },
       { title: 'Reservar Salones', image: meme, path: '/reservar-salones' },
-      { title: 'Mis Reservas', image: meme, path: '/mis-reservas' },
+      { title: 'Mis Reservas', image: meme, path: '/revisar-peticiones' },
       { title: 'FAQ’s', image: meme, path: '/faq' },
     ];
 
