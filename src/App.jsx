@@ -53,7 +53,7 @@ export default function App() {
   console.log(catal);
 
   async function loadUser(user) { 
-   const {name, email, picture }=user;
+   const {name, email, img }=user;
    try {
     const res = await fetch("http://localhost:8000/api/users", {
       method: "POST",
@@ -64,7 +64,7 @@ export default function App() {
         name,
         email,
         warnings:[],
-        img:picture
+        img
       })
     });
 
@@ -81,7 +81,8 @@ export default function App() {
 
   useEffect(() => {
     if (isAuthenticated && user && !isAdmin) {
-      loadUser(user);   
+      loadUser(user)
+      console.log(user);   
     }
   }, [isAuthenticated, user]);
   
