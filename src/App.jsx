@@ -32,6 +32,8 @@ import RevisarPeticiones from "./pages/revisarpeticiones";
 import PeticionesProductos from "./pages/peticionesproductos";
 import PeticionesSalones from "./pages/peticionessalones";
 
+import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
+
 export default function App() {
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
@@ -77,6 +79,7 @@ export default function App() {
             <Route path="/peticiones-productos" element={<PeticionesProductos catal={catal} setCatal={setCatal}/>}/>
             <Route path="/perfiles" />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/Usuario" element={<Usuario />} />
           </Routes>
         </Box>
 
@@ -85,3 +88,4 @@ export default function App() {
     </Box>
   );
 }
+
