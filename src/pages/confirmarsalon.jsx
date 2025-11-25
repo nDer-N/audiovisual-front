@@ -84,7 +84,7 @@ export default function ConfirmarSalon() {
                             paddingX: 9,
                             "&:hover": { backgroundColor: "#dce0f3" }
                         }}
-
+                        onClick={() => navigate("/mis-reservas")}
                     >
                         Ir al carrito ❯❯
                     </Button>

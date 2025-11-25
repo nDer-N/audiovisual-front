@@ -61,7 +61,7 @@ export default function App() {
             <Route path="/gestionar-salones" element={<SalonesAdmin cotol={cotol} setCotol={setCotol} />} />
             <Route path="/agregar-salones" element={<AgregarSalon cotol={cotol} setCotol={setCotol} />} />
             <Route path="/detalle-salon/:id" element={<DetalleSalonAdmin cotol={cotol} />} />
-            <Route path="/mis-reservas" element={<MisReservas />} />
+            <Route path="/mis-reservas" element={<MisReservas catal={catal} cotol={cotol}/>} />
             <Route path="/producto/:id" element={<Itempage catal={catal} />} />
             <Route path="/confirmacion/:id" element={<ConfirmationPage />} />
             <Route path="/gestionar-equipo" element={<EquipmentAdmin catal={catal} setCatal={setCatal} />} />
