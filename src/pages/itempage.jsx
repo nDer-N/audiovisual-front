@@ -27,8 +27,29 @@ export default function Itempage({ catal }) {
         navigate(`/confirmacion/${id}`);
     };
     const agregarReserva = (nueva) => {
-        setReser(prev => [...prev, nueva]);
-    };
+        setReser(prev => {
+        const existente = prev.find(r =>
+            r.id === nueva.id &&
+            r.day === nueva.day &&
+            r.month === nueva.month &&
+            r.year === nueva.year &&
+            r.user === nueva.user
+        );
+
+        if (existente) {
+            return prev.map(r =>
+                r.id === nueva.id &&
+                r.user === nueva.user &&
+                r.day === nueva.day &&
+                r.month === nueva.month &&
+                r.year === nueva.year 
+                    ? { ...r, quantity: r.quantity + nueva.quantity }
+                    : r
+            );
+        }
+        return [...prev, nueva];
+    });
+};
 
 
     return (
@@ -155,7 +176,9 @@ export default function Itempage({ catal }) {
                                     name: producto.name,
                                     description: producto.description,
                                     image: producto.img,
-                                    user: user?.email ?? "desconocido"
+                                    user: user?.email ?? "desconocido",
+                                    isRoom: false,
+                                    status:"Proceso"
                                 });
                                 handleClick(id);
                             }

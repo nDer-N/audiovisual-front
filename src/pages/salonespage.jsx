@@ -129,7 +129,9 @@ export default function SalonesPage({ cotol }) {
                                     name: salones.name,
                                     description: salones.description,
                                     image: salones.img,
-                                    user: user?.email ?? "desconocido"
+                                    user: user?.email ?? "desconocido",
+                                    isRoom: true,
+                                    status:"Proceso"
                                 });
                                 handleClick(id);
                             }
