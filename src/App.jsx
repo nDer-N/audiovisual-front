@@ -51,6 +51,39 @@ export default function App() {
   }, [location.pathname]);
 
   console.log(catal);
+
+  async function loadUser(user) { 
+   const {name, email, image }=user;
+   try {
+    const res = await fetch("http://localhost:8000/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        warnings:[],
+        img:image
+      })
+    });
+
+    const data = await res.json();
+    console.log("Usuario cargado o creado:", data);
+    return data;
+
+  } catch (error) {
+    console.error("Error en loadUser:", error);
+    return null;
+  }
+
+  }
+
+  useEffect(() => {
+    if (isAuthenticated && user && !isAdmin) {
+      loadUser(user);   
+    }
+  }, [isAuthenticated, user]);
   
 
   if (isLoading) return <p>Cargando...</p>;
@@ -63,6 +96,8 @@ export default function App() {
   ) : !isValidEmail ? (
     <AccessDenied />
   ) : (
+    //crear objeto user
+    
     <Box sx={{ display: "flex" }}>
       <SideMenu isAdmin={isAdmin} />
 
