@@ -168,7 +168,7 @@ export default function Itempage({ catal }) {
                                 const mes = parseInt(selectedDate.month() + 1, 10);
                                 const año = parseInt(selectedDate.year(), 10);
                                 agregarReserva({
-                                    id: producto.id,
+                                    id: producto._id,
                                     date: selectedDate,
                                     quantity: cantida,
                                     day: dia,

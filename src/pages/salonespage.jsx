@@ -11,7 +11,7 @@ import { useAppContext } from '../context/AppContext';
 
 export default function SalonesPage({ cotol }) {
    const { id } = useParams();
-    const salones = cotol.find((p) => p.id === Number(id));
+    const salones = cotol.find((p) => p._id === id);
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
@@ -121,7 +121,7 @@ export default function SalonesPage({ cotol }) {
                                 const mes = parseInt(selectedDate.month() + 1, 10);
                                 const año = parseInt(selectedDate.year(), 10);
                                 agregarReserva({
-                                    id: salones.id,
+                                    id: salones._id,
                                     date: selectedDate,
                                     day: dia,
                                     month: mes,
