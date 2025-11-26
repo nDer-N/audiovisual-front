@@ -14,7 +14,7 @@ export default function EquipmentAdmin({ catal, setCatal }) {
   if (!confirm("¿Seguro que quieres eliminar este producto?")) return;
 
   try {
-    const res = await fetch(`http://localhost:8000/api/products/${id}`, {
+    const res = await fetch(`https://equipo1.ralejandro.com/api/products/${id}`, {
       method: "DELETE",
     });
 

@@ -13,7 +13,7 @@ export default function SalonesAdmin({ cotol, setCotol }) {
         if (!confirmacion) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/rooms/${id}`, {
+            const res = await fetch(`https://equipo1.ralejandro.com/api/rooms/${id}`, {
                 method: "DELETE"
             });
 
@@ -41,7 +41,7 @@ export default function SalonesAdmin({ cotol, setCotol }) {
     };
 
     async function loadSalones() {
-        const res = await fetch("http://localhost:8000/api/rooms");
+        const res = await fetch("https://equipo1.ralejandro.com/api/rooms");
         const data = await res.json();
         setCotol(data);
     }

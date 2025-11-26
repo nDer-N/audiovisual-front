@@ -24,7 +24,7 @@ export default function AgregarEquipo() {
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/products", {
+      const res = await fetch("https://equipo1.ralejandro.com/api/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

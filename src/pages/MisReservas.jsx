@@ -13,7 +13,7 @@ export default function ReservasSalon() {
 
   async function getNameProduct(id) {
     try {
-      const res = await fetch(`http://localhost:8000/api/products/${id}`);
+      const res = await fetch(`https://equipo1.ralejandro.com/api/products/${id}`);
 
       if (!res.ok) return "Producto no encontrado";
 
@@ -27,7 +27,7 @@ export default function ReservasSalon() {
 
   async function getImgProduct(id) {
     try {
-      const res = await fetch(`http://localhost:8000/api/products/${id}`);
+      const res = await fetch(`https://equipo1.ralejandro.com/api/products/${id}`);
 
       if (!res.ok) return "";
 
