@@ -84,6 +84,9 @@ export default function MisReservas({ catal, cotol }) {
                       <Typography variant="body1">
                         <strong>Fecha reservada:</strong> {item.day}/{item.month}/{item.year}
                       </Typography>
+                      <Typography variant="body1">
+                        <strong>Fecha de Entrega:</strong> {item.finalday}/{item.finalmonth}/{item.finalyear}
+                      </Typography>
 
                       {/* Estado de la peticion */}
                       <Typography

@@ -8,12 +8,15 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 export default function SalonesPage({ cotol }) {
    const { id } = useParams();
     const salones = cotol.find((p) => p._id === id);
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
+    const [finalDay, setFinalDay] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
     const [acepto, setAcepto] = useState(false);
     const fechactual = dayjs();
@@ -23,7 +26,31 @@ export default function SalonesPage({ cotol }) {
         navigate(`/confirmacion-del-salon/${id}`);
     };
     const agregarReserva = (nueva) => {
-        setReser(prev => [...prev, nueva]);
+        setReser(prev => {
+
+            const existente = prev.find(r =>
+                r.id === nueva.id &&
+                r.user === nueva.user &&
+                r.date.getTime() === selectedDate.getTime()
+            );
+
+            if (existente) {
+                return prev.map(r =>
+                    r.id === nueva.id &&
+                        r.user === nueva.user &&
+                        r.date.getTime() === selectedDate.getTime()
+                        ? {
+                            ...r,
+                            finaldate: nueva.finaldate,
+                            finalday: nueva.finalday,
+                            finalmonth: nueva.finalmonth,
+                            finalyear: nueva.finalyear
+                        }
+                        : r
+                );
+            }
+            return [...prev, nueva];
+        });
     };
 
 
@@ -117,21 +144,29 @@ export default function SalonesPage({ cotol }) {
                                 return;
                             }
                             else {
-                                const dia = parseInt(selectedDate.date(), 10);
-                                const mes = parseInt(selectedDate.month() + 1, 10);
-                                const año = parseInt(selectedDate.year(), 10);
+                                const dia = selectedDate.getDate();
+                                const mes = selectedDate.getMonth() + 1;
+                                const año = selectedDate.getFullYear();
+
+                                const diafinal = finalDay.getDate();
+                                const mesfinal = finalDay.getMonth() + 1;
+                                const añofinal = finalDay.getFullYear();
                                 agregarReserva({
                                     id: salones._id,
                                     date: selectedDate,
+                                    finaldate: finalDay,
                                     day: dia,
+                                    finalday: diafinal,
                                     month: mes,
+                                    finalmonth: mesfinal,
                                     year: año,
+                                    finalyear: añofinal,
                                     name: salones.name,
                                     description: salones.description,
                                     image: salones.img,
                                     user: user?.email ?? "desconocido",
                                     isRoom: true,
-                                    status:"Proceso"
+                                    status: "Proceso"
                                 });
                                 handleClick(id);
                             }
@@ -145,18 +180,22 @@ export default function SalonesPage({ cotol }) {
                 {showCalendar && (
                     <Box sx={{ mt: 2 }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateCalendar
-                                value={selectedDate}
-                                onChange={(newDate) => setSelectedDate(newDate)}
+                            <Calendar
+                                selectRange={true}
+                                onChange={(value) => {
+                                    setSelectedDate(new Date(value[0]));
+                                    setFinalDay(new Date(value[1]));
+                                }}
+                                value={[selectedDate || null, finalDay || null]}
                             />
                         </LocalizationProvider>
                         <Typography sx={{ mt: 1 }}>
                             Fecha actual: {JSON.stringify(fechactual)}
                         </Typography>
 
-                        {selectedDate && (
-                            <Typography sx={{ mt: 1 }}>
-                                Fecha seleccionada: {JSON.stringify(selectedDate)}
+                        {selectedDate && finalDay && (
+                            <Typography sx={{ mt: 2 }}>
+                                Rango seleccionado: {JSON.stringify(selectedDate)} → {JSON.stringify(finalDay)}
                             </Typography>
                         )}
                         <Button variant='contained' sx={{ mt: 4 }} onClick={() => setShowCalendar(false)}>Hecho</Button>
