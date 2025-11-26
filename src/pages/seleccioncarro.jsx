@@ -6,18 +6,18 @@ import imagen2 from "../images/salon.png";
 
 import { useNavigate } from 'react-router';
 
-export default function RevisarPeticiones() {
+export default function SeleccionCarro() {
     const navigate = useNavigate();
     const cards = [
         {
-            title: "Revisar peticiones de Productos",
+            title: "Mis reservaciones de Productos",
             image: imagen1,
-            route: "/peticiones-productos",
+            route: "/mis-reservas-productos",
         },
         {
-            title: "Revisar peticiones de Salónes",
+            title: "Mis reservaciones de Salones",
             image: imagen2,
-            route: "/peticiones-salones",
+            route: "/mis-reservas-salones",
         },
     ];
     return (

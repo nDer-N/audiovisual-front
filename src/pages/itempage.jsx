@@ -39,6 +39,7 @@ export default function Itempage({ catal }) {
     }
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
+        console.log(selectedDate);
         console.log(finalDay);
     };
     async function getReservations(productId, dateStart, dateEnd) {
@@ -229,10 +230,39 @@ const agregarReserva = async (nueva) => {
                                     const start = normalizeUTC(value[0]);
                                     const end = normalizeUTC(value[1]);
 
+
+                                    const hoy = normalizeUTC(new Date());
+                                    
+                                    console.log(start, end, hoy);
+                                    if (start && !end) {
+                                        if (start < hoy) {
+                                            alert("No puedes seleccionar una fecha de inicio anterior a hoy.");
+                                            return;
+                                        }
+
+                                        setSelectedDate(start);
+                                        setFinalDay(null);
+                                        return;
+                                    }
+                                    if (start && end) {
+
+                                        if (start < hoy) {
+                                            alert("La fecha inicial no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
+
+                                        if (end < hoy) {
+                                            alert("La fecha final no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
+
+
                                     setSelectedDate(start);
                                     setFinalDay(end);
-
-
                                     const overlap = await getReservations(producto._id, start, end);
 
                                     console.log("Reservas:", overlap);
@@ -240,7 +270,7 @@ const agregarReserva = async (nueva) => {
                                     setPedido(total);
                                     setAvailable(producto.quantity - total);
                                     setErrorDisponibilidad(false);
-
+                                    }
 
 
                                 }}
