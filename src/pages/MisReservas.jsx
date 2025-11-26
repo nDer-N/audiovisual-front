@@ -44,7 +44,7 @@ export default function MisReservas({ catal, cotol }) {
         ) : (
           <Grid container spacing={6} justifyContent="center">
             {reser.map((item) => (
-              <Grid container item key={item.id} sx={{ maxWidth: 900 }}>
+              <Grid container item key={item.object._id} sx={{ maxWidth: 900 }}>
 
                 {/* Imagen */}
                 <Grid item >
@@ -65,24 +65,27 @@ export default function MisReservas({ catal, cotol }) {
 
                       {/* Nombre */}
                       <Typography variant="h5" fontWeight="bold" mb={1}>
-                        {item.name}
+                        {item.object.name}
                       </Typography>
 
                       {/* Descripcion */}
                       <Typography variant="body1" color="text.secondary" mb={1}>
-                        {item.description}
+                        {item.object.description}
                       </Typography>
 
                       {/* Solo sale la cantidad si no es Salon */}
                       {!item.isRoom && (
                         <Typography variant="body1" mb={1}>
-                          <strong>Cantidad:</strong> {item.quantity}
+                          <strong>Cantidad:</strong> {item.object.quantity}
                         </Typography>
                       )}
 
                       {/* Fecha */}
                       <Typography variant="body1">
-                        <strong>Fecha reservada:</strong> {item.day}/{item.month}/{item.year}
+                        <strong>Fecha reservada:</strong> {item.dateStart}
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>Fecha de Entrega:</strong> {item.dateEnd}
                       </Typography>
 
                       {/* Estado de la peticion */}

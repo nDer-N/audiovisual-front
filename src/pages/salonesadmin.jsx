@@ -1,57 +1,63 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Grid, Button, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { useAppContext } from '../context/AppContext';
-import { useEffect } from 'react';
 
 export default function SalonesAdmin({ cotol, setCotol }) {
     const navigate = useNavigate();
-    const { isAdmin, nuevosalon, setNuevoSalon } = useAppContext();
-    console.log(nuevosalon);
+    const { isAdmin } = useAppContext();
 
-    const eliminarProducto = (id) => {
-        setCotol((prev) => prev.filter((item) => item.id !== id));
+    const eliminarProducto = async (id) => {
+        const confirmacion = window.confirm("¿Seguro que quieres eliminar este salón?");
+        if (!confirmacion) return;
+
+        try {
+            const res = await fetch(`http://localhost:8000/api/rooms/${id}`, {
+                method: "DELETE"
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                alert("Error: " + data.message);
+                return;
+            }
+
+            // Actualizar el estado local
+            setCotol(prev => prev.filter(item => item._id !== id));
+
+        } catch (err) {
+            console.error(err);
+            alert("Hubo un error al eliminar el salón.");
+        }
     };
+
     const irADetalle = (id) => {
         navigate(`/detalle-salon/${id}`);
     };
+
     const agregarProducto = () => {
         navigate('/agregar-salones');
     };
-    {/*
-  const editarproducto = (id) => {
-    navigate(`/edicion/${id}`);
-  };
-  */}
+
+    async function loadSalones() {
+        const res = await fetch("http://localhost:8000/api/rooms");
+        const data = await res.json();
+        setCotol(data);
+    }
 
     useEffect(() => {
-        if (!nuevosalon || !nuevosalon.id) return;
+        loadSalones();
+    }, []);
 
-        setCotol((prev) => {
-            const existe = prev.some((item) => item.id === nuevosalon.id);
-            if (existe) return prev;
-
-            return [...prev, {
-                ...nuevosalon,
-                img: nuevosalon.image
-            }];
-        });
-        setNuevoSalon({
-            id: null,
-            name: "",
-            description: "",
-            image: null
-        });
-    }, [nuevosalon]);
     return isAdmin ? (
         <Box p={4}>
             <Grid container spacing={7} justifyContent="center">
                 {cotol.map((item) => (
-                    <Grid key={item.id}>
+                    <Grid key={item._id}>
                         <Card sx={{ p: 2, position: 'relative', borderRadius: 3, boxShadow: 3 }}>
                             <Button
-                                onClick={() => eliminarProducto(item.id)}
+                                onClick={() => eliminarProducto(item._id)}
                                 sx={{
                                     minWidth: 0,
                                     width: 28,
@@ -68,31 +74,13 @@ export default function SalonesAdmin({ cotol, setCotol }) {
                             >
                                 -
                             </Button>
-                            {/*
-                  <Button
-                    onClick={() => editarproducto(item.id)}
-                    sx={{
-                      minWidth: 0,
-                      position: 'absolute',
-                      top: 8,
-                      left: 8,
-                      bgcolor: 'grey.200',
-                      borderRadius: 1,
-                      px: 1,
-                      textTransform: 'none',
-                      fontSize: '0.75rem'
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  */}
 
                             <CardMedia
                                 component="img"
                                 image={item.img}
                                 alt={item.name}
                                 sx={{ height: 420, objectFit: 'contain', cursor: 'pointer', borderRadius: 2 }}
-                                onClick={() => irADetalle(item.id)}
+                                onClick={() => irADetalle(item._id)}
                             />
 
                             <CardContent>
@@ -104,6 +92,7 @@ export default function SalonesAdmin({ cotol, setCotol }) {
                     </Grid>
                 ))}
             </Grid>
+
             <Grid mt={6}>
                 <Button
                     onClick={agregarProducto}

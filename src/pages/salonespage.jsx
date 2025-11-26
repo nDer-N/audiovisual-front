@@ -8,12 +8,17 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 export default function SalonesPage({ cotol }) {
-   const { id } = useParams();
+    const { id } = useParams();
+    const [errorDisponibilidad, setErrorDisponibilidad] = useState(false);
     const salones = cotol.find((p) => p._id === id);
+    const [available, setAvailable] = useState(1);
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
+    const [finalDay, setFinalDay] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
     const [acepto, setAcepto] = useState(false);
     const fechactual = dayjs();
@@ -22,10 +27,63 @@ export default function SalonesPage({ cotol }) {
     const handleClick = (id) => {
         navigate(`/confirmacion-del-salon/${id}`);
     };
-    const agregarReserva = (nueva) => {
-        setReser(prev => [...prev, nueva]);
-    };
 
+    function normalizeUTC(date) {
+        const d = new Date(date);
+        d.setUTCHours(0, 0, 0, 0);
+        return d.toISOString();
+    }
+
+    async function getReservations(roomId, dateStart, dateEnd) {
+        try {
+            const res = await fetch(
+                `http://localhost:8000/api/reservas/salones/${roomId}/${dateStart}/${dateEnd}`
+            );
+
+            if (!res.ok) throw new Error("Error al obtener reservas");
+
+            const data = await res.json();
+
+            return data;
+
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
+    }
+
+
+
+
+
+    const agregarReserva = async (nueva) => {
+        try {
+            const { isRoom, ...soloBack } = nueva;
+
+            const res = await fetch("http://localhost:8000/api/reservas/salones/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(soloBack)
+            });
+
+            if (!res.ok) {
+                setErrorDisponibilidad(true);
+                return;
+            }
+
+            const data = await res.json();
+            console.log("Reserva creada:", data);
+
+
+            setReser(prev => [...prev, nueva]);
+
+            handleClick(id);
+
+        } catch (error) {
+            console.error("Error POST:", error);
+            setErrorDisponibilidad(true);
+        }
+    };
 
     return (
         <Grid container spacing={4} sx={{ padding: 4 }}>
@@ -117,23 +175,18 @@ export default function SalonesPage({ cotol }) {
                                 return;
                             }
                             else {
-                                const dia = parseInt(selectedDate.date(), 10);
-                                const mes = parseInt(selectedDate.month() + 1, 10);
-                                const año = parseInt(selectedDate.year(), 10);
-                                agregarReserva({
-                                    id: salones._id,
-                                    date: selectedDate,
-                                    day: dia,
-                                    month: mes,
-                                    year: año,
-                                    name: salones.name,
+
+                                const nuevaReserva = {
                                     description: salones.description,
-                                    image: salones.img,
+                                    roomId: salones._id,
                                     user: user?.email ?? "desconocido",
+                                    dateStart: selectedDate,
+                                    dateEnd: finalDay,
+                                    available: available,
+                                    status: "proceso",
                                     isRoom: true,
-                                    status:"Proceso"
-                                });
-                                handleClick(id);
+                                };
+                                agregarReserva(nuevaReserva);
                             }
 
 
@@ -145,18 +198,42 @@ export default function SalonesPage({ cotol }) {
                 {showCalendar && (
                     <Box sx={{ mt: 2 }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateCalendar
-                                value={selectedDate}
-                                onChange={(newDate) => setSelectedDate(newDate)}
+                            <Calendar
+                                selectRange={true}
+                                onChange={async (value) => {
+                                    const start = normalizeUTC(value[0]);
+                                    const end = normalizeUTC(value[1]);
+
+                                    setSelectedDate(start);
+                                    setFinalDay(end);
+                                     
+
+                                    const overlap = await getReservations(salones._id, start, end);
+
+                                    console.log("Reservas:", overlap);
+                                    const total = overlap.length;
+                                    
+                                    if (total > 0) {
+                                        setAvailable(0);
+                                    } else {
+                                        setAvailable(1);
+                                    }
+
+                                    setErrorDisponibilidad(false);
+
+
+
+                                }}
+                                value={[selectedDate || null, finalDay || null]}
                             />
                         </LocalizationProvider>
                         <Typography sx={{ mt: 1 }}>
                             Fecha actual: {JSON.stringify(fechactual)}
                         </Typography>
 
-                        {selectedDate && (
-                            <Typography sx={{ mt: 1 }}>
-                                Fecha seleccionada: {JSON.stringify(selectedDate)}
+                        {selectedDate && finalDay && (
+                            <Typography sx={{ mt: 2 }}>
+                                Rango seleccionado: {JSON.stringify(selectedDate)} → {JSON.stringify(finalDay)}
                             </Typography>
                         )}
                         <Button variant='contained' sx={{ mt: 4 }} onClick={() => setShowCalendar(false)}>Hecho</Button>
@@ -214,6 +291,49 @@ export default function SalonesPage({ cotol }) {
                     </Dialog>
                 )}
             </Grid>
+            {errorDisponibilidad && (
+                <Box
+                    sx={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: 2000,
+                        width: "350px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            backgroundColor: "#ffcccc",
+                            borderLeft: "6px solid red",
+                            padding: 3,
+                            borderRadius: 2,
+                            textAlign: "center",
+                            boxShadow: 4,
+                        }}
+                    >
+                        <Typography variant="h6" fontWeight="bold" color="red">
+                            No hay disponibilidad
+                        </Typography>
+                        <Typography sx={{ mt: 1 }}>
+                            No hay disponibilidad en las fechas seleccionadas.
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "red",
+                                mt: 2,
+                                "&:hover": { backgroundColor: "#aa0000" }
+                            }}
+                            onClick={() => setErrorDisponibilidad(false)}
+                        >
+                            Aceptar
+                        </Button>
+                    </Box>
+                </Box>
+            )}
+
 
         </Grid>
     );
