@@ -8,6 +8,9 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+
 
 
 
@@ -17,6 +20,7 @@ export default function Itempage({ catal }) {
     const producto = catal.find((p) => p.id === Number(id));
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
+    const [finalDay, setFinalDay] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
     const [acepto, setAcepto] = useState(false);
     const [cantida, setCantidad] = React.useState(1);
@@ -25,31 +29,32 @@ export default function Itempage({ catal }) {
     const { user, setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
+        console.log(finalDay);
     };
     const agregarReserva = (nueva) => {
         setReser(prev => {
-        const existente = prev.find(r =>
-            r.id === nueva.id &&
-            r.day === nueva.day &&
-            r.month === nueva.month &&
-            r.year === nueva.year &&
-            r.user === nueva.user
-        );
-
-        if (existente) {
-            return prev.map(r =>
+            const existente = prev.find(r =>
                 r.id === nueva.id &&
-                r.user === nueva.user &&
                 r.day === nueva.day &&
                 r.month === nueva.month &&
-                r.year === nueva.year 
-                    ? { ...r, quantity: r.quantity + nueva.quantity }
-                    : r
+                r.year === nueva.year &&
+                r.user === nueva.user
             );
-        }
-        return [...prev, nueva];
-    });
-};
+
+            if (existente) {
+                return prev.map(r =>
+                    r.id === nueva.id &&
+                        r.user === nueva.user &&
+                        r.day === nueva.day &&
+                        r.month === nueva.month &&
+                        r.year === nueva.year
+                        ? { ...r, quantity: r.quantity + nueva.quantity }
+                        : r
+                );
+            }
+            return [...prev, nueva];
+        });
+    };
 
 
     return (
@@ -163,22 +168,30 @@ export default function Itempage({ catal }) {
                                 return;
                             }
                             else {
-                                const dia = parseInt(selectedDate.date(), 10);
-                                const mes = parseInt(selectedDate.month() + 1, 10);
-                                const año = parseInt(selectedDate.year(), 10);
+                                const dia = selectedDate.getDate();
+                                const mes = selectedDate.getMonth() + 1;
+                                const año = selectedDate.getFullYear();
+
+                                const diafinal = finalDay.getDate();
+                                const mesfinal = finalDay.getMonth() + 1;
+                                const añofinal = finalDay.getFullYear();
                                 agregarReserva({
                                     id: producto.id,
                                     date: selectedDate,
+                                    finaldate: finalDay,
                                     quantity: cantida,
                                     day: dia,
+                                    finalday: diafinal,
                                     month: mes,
+                                    finalmonth: mesfinal,
                                     year: año,
+                                    finalyear: añofinal,
                                     name: producto.name,
                                     description: producto.description,
                                     image: producto.img,
                                     user: user?.email ?? "desconocido",
                                     isRoom: false,
-                                    status:"Proceso"
+                                    status: "Proceso"
                                 });
                                 handleClick(id);
                             }
@@ -192,18 +205,22 @@ export default function Itempage({ catal }) {
                 {showCalendar && (
                     <Box sx={{ mt: 2 }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateCalendar
-                                value={selectedDate}
-                                onChange={(newDate) => setSelectedDate(newDate)}
+                            <Calendar
+                                selectRange={true}
+                                onChange={(value) => {
+                                    setSelectedDate(new Date(value[0]));
+                                    setFinalDay(new Date(value[1]));
+                                }}
+                                value={[selectedDate || null, finalDay || null]}
                             />
                         </LocalizationProvider>
                         <Typography sx={{ mt: 1 }}>
                             Fecha actual: {JSON.stringify(fechactual)}
                         </Typography>
 
-                        {selectedDate && (
-                            <Typography sx={{ mt: 1 }}>
-                                Fecha seleccionada: {JSON.stringify(selectedDate)}
+                        {selectedDate && finalDay && (
+                            <Typography sx={{ mt: 2 }}>
+                                Rango seleccionado: {JSON.stringify(selectedDate)} → {JSON.stringify(finalDay)}
                             </Typography>
                         )}
                         <Button variant='contained' sx={{ mt: 4 }} onClick={() => setShowCalendar(false)}>Hecho</Button>
