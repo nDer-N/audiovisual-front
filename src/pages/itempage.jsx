@@ -39,6 +39,7 @@ export default function Itempage({ catal }) {
     }
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
+        console.log(selectedDate);
         console.log(finalDay);
     };
     async function getReservations(productId, dateStart, dateEnd) {

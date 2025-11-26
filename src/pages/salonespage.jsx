@@ -26,6 +26,8 @@ export default function SalonesPage({ cotol }) {
     const { user, setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion-del-salon/${id}`);
+        console.log(selectedDate);
+        console.log(finalDay);
     };
 
     function normalizeUTC(date) {
