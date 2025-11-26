@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -20,11 +20,52 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { useAppContext } from "../context/AppContext";
+
 import { useNavigate } from "react-router";
 
 export default function PerfilUsuario() {
   const { user, logout, isAdmin } = useAppContext();
+  const [warnings, setWarnings] = useState([]);
   const navigate = useNavigate();
+  const [reservas, setReservas] = useState([]);
+
+  useEffect(() => {
+    async function fetchReservas() {
+      try {
+        const res = await fetch(`http://localhost:8000/api/reservas/${user.email}`);
+        const data = await res.json();
+        setReservas(data);
+      } catch (err) {
+        console.error("Error cargando reservas:", err);
+      }
+    }
+
+    if (user?.email) {
+      fetchReservas();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    async function fetchWarnings() {
+      try {
+        const res = await fetch(`http://localhost:8000/api/users/warnings/${user.email}`);
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setWarnings(data);
+        } else {
+          setWarnings([]);
+        }
+      } catch (err) {
+        console.error("Error cargando warnings:", err);
+      }
+    }
+
+    if (user?.email) {
+      fetchWarnings();
+    }
+  }, [user]);
+
 
   const handleGoHome = () => {
     navigate("/");
@@ -248,7 +289,7 @@ export default function PerfilUsuario() {
           src={user.img}
         />
 
-        <Typography sx={{ fontSize: "26px", fontWeight: "500", right: -300, position: "relative"  }}>
+        <Typography sx={{ fontSize: "26px", fontWeight: "500", right: -300, position: "relative" }}>
           Detalles del perfil
         </Typography>
 
@@ -299,8 +340,34 @@ export default function PerfilUsuario() {
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography fontWeight="500">Equipos</Typography>
             </AccordionSummary>
+
             <AccordionDetails>
-              <Typography color="gray">Especificaciones generales</Typography>
+              {reservas.length === 0 ? (
+                <Typography color="gray">No tienes reservas aún.</Typography>
+              ) : (
+                reservas.map((r) => (
+                  <Box
+                    key={r._id}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: "8px",
+                      bgcolor: "#eef2ff",
+                      borderLeft: "4px solid #7aa0ff",
+                    }}
+                  >
+                    <Typography fontWeight="600">{r.description}</Typography>
+
+                    <Typography>Fecha inicio: {new Date(r.dateStart).toLocaleDateString()}</Typography>
+                    <Typography>Fecha fin: {new Date(r.dateEnd).toLocaleDateString()}</Typography>
+                    <Typography>Cantidad: {r.quantity}</Typography>
+
+                    <Typography sx={{ mt: 1 }}>
+                      Estado: <b>{r.status}</b>
+                    </Typography>
+                  </Box>
+                ))
+              )}
             </AccordionDetails>
           </Accordion>
 
@@ -310,19 +377,43 @@ export default function PerfilUsuario() {
             </AccordionSummary>
           </Accordion>
 
-          <Accordion expanded disableGutters>
-            <AccordionSummary>
+          <Accordion disableGutters>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography fontWeight="500">Advertencias</Typography>
             </AccordionSummary>
+
             <AccordionDetails>
-              <Box sx={{ borderLeft: "4px solid #7aa0ff", pl: 1.5 }}>
-                <Typography color="gray">
-                  Tincidunt purus at amet, eu nisl urna at. Pellentesque diam
-                  dictum consectetur leo ipsum. Lectus gravida id aliquamc
-                </Typography>
-              </Box>
+              {warnings.length === 0 ? (
+                <Typography color="gray">No tienes advertencias.</Typography>
+              ) : (
+                warnings.map((w, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: "8px",
+                      bgcolor: "#ffe6e6",
+                      borderLeft: "4px solid red",
+                    }}
+                  >
+                    <Typography fontWeight="600" color="red">
+                      Advertencia {i + 1}
+                    </Typography>
+
+                    <Typography sx={{ mt: 1 }}>
+                      {w.message}
+                    </Typography>
+
+                    <Typography sx={{ mt: 1, fontSize: "14px", color: "gray" }}>
+                      Fecha: {new Date(w.date).toLocaleDateString()}
+                    </Typography>
+                  </Box>
+                ))
+              )}
             </AccordionDetails>
           </Accordion>
+
         </Paper>
 
         {/* Logout */}

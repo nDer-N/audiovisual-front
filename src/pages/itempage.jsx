@@ -17,9 +17,13 @@ import "react-calendar/dist/Calendar.css";
 
 export default function Itempage({ catal }) {
     const { id } = useParams();
+    const [errorDisponibilidad, setErrorDisponibilidad] = useState(false);
     const producto = catal.find(p => p._id === id);
-    console.log(producto);
+    const [pedido, setPedido] = useState(0);
+    const [available, setAvailable] = useState(producto.quantity);
+    //console.log(producto);
     const [showCalendar, setShowCalendar] = useState(false);
+
     const [selectedDate, setSelectedDate] = useState(null);
     const [finalDay, setFinalDay] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
@@ -28,35 +32,69 @@ export default function Itempage({ catal }) {
     const fechactual = dayjs();
     const navigate = useNavigate();
     const { user, setReser } = useAppContext();
+    function normalizeUTC(date) {
+        const d = new Date(date);
+        d.setUTCHours(0, 0, 0, 0);
+        return d.toISOString();
+    }
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
         console.log(finalDay);
     };
-    const agregarReserva = (nueva) => {
-        setReser(prev => {
-            const existente = prev.find(r =>
-                r.id === nueva.id &&
-                r.day === nueva.day &&
-                r.month === nueva.month &&
-                r.year === nueva.year &&
-                r.user === nueva.user
+    async function getReservations(productId, dateStart, dateEnd) {
+        try {
+            const res = await fetch(
+                `http://localhost:8000/api/reservas/${productId}/${dateStart}/${dateEnd}`
             );
 
-            if (existente) {
-                return prev.map(r =>
-                    r.id === nueva.id &&
-                        r.user === nueva.user &&
-                        r.day === nueva.day &&
-                        r.month === nueva.month &&
-                        r.year === nueva.year
-                        ? { ...r, quantity: r.quantity + nueva.quantity }
-                        : r
-                );
-            }
-            return [...prev, nueva];
-        });
-    };
+            if (!res.ok) throw new Error("Error al obtener reservas");
 
+            const data = await res.json();
+
+            return data;
+
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
+    }
+    function sumQuantities(reservations) {
+        if (!Array.isArray(reservations)) return 0;
+
+        return reservations.reduce((total, r) => total + (r.quantity || 0), 0);
+    }
+
+
+
+
+const agregarReserva = async (nueva) => {
+    try {
+        const { isRoom, ...soloBack } = nueva;
+
+        const res = await fetch("http://localhost:8000/api/reservas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(soloBack) 
+        });
+
+        if (!res.ok) {
+            setErrorDisponibilidad(true);
+            return;
+        }
+
+        const data = await res.json();
+        console.log("Reserva creada:", data);
+
+        
+        setReser(prev => [...prev, nueva]);
+
+        handleClick(id);
+
+    } catch (error) {
+        console.error("Error POST:", error);
+        setErrorDisponibilidad(true);
+    }
+};
 
     return (
         <Grid container spacing={4} sx={{ padding: 4 }}>
@@ -160,44 +198,23 @@ export default function Itempage({ catal }) {
                         variant="contained"
                         sx={{ paddingX: 4 }}
                         onClick={() => {
-                            if (!selectedDate) {
-                                alert("Debes elegir una fecha antes de continuar.");
-                                return;
-                            }
-                            if (!acepto) {
-                                alert("Debes aceptar los términos y condiciones.");
-                                return;
-                            }
-                            else {
-                                const dia = selectedDate.getDate();
-                                const mes = selectedDate.getMonth() + 1;
-                                const año = selectedDate.getFullYear();
+                            if (!selectedDate) return alert("Debes elegir una fecha.");
+                            if (!acepto) return alert("Debes aceptar los términos.");
 
-                                const diafinal = finalDay.getDate();
-                                const mesfinal = finalDay.getMonth() + 1;
-                                const añofinal = finalDay.getFullYear();
-                                agregarReserva({
-                                    id: producto._id,
-                                    date: selectedDate,
-                                    finaldate: finalDay,
-                                    quantity: cantida,
-                                    day: dia,
-                                    finalday: diafinal,
-                                    month: mes,
-                                    finalmonth: mesfinal,
-                                    year: año,
-                                    finalyear: añofinal,
-                                    name: producto.name,
-                                    description: producto.description,
-                                    image: producto.img,
-                                    user: user?.email ?? "desconocido",
-                                    isRoom: false,
-                                    status: "Proceso"
-                                });
-                                handleClick(id);
-                            }
+                            const nuevaReserva = {
+                                description: producto.description,
+                                quantity: cantida,
+                                productId: producto._id,
+                                user: user?.email ?? "desconocido",
+                                dateStart: selectedDate,
+                                dateEnd: finalDay,
+                                available: available,
+                                status: "proceso",
+                                isRoom:false,
+                            };
 
-
+                            agregarReserva(nuevaReserva);
+                            
                         }}
                     >
                         Agregar a Carrito
@@ -208,9 +225,24 @@ export default function Itempage({ catal }) {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <Calendar
                                 selectRange={true}
-                                onChange={(value) => {
-                                    setSelectedDate(new Date(value[0]));
-                                    setFinalDay(new Date(value[1]));
+                                onChange={async (value) => {
+                                    const start = normalizeUTC(value[0]);
+                                    const end = normalizeUTC(value[1]);
+
+                                    setSelectedDate(start);
+                                    setFinalDay(end);
+
+
+                                    const overlap = await getReservations(producto._id, start, end);
+
+                                    console.log("Reservas:", overlap);
+                                    const total = sumQuantities(overlap);
+                                    setPedido(total);
+                                    setAvailable(producto.quantity - total);
+                                    setErrorDisponibilidad(false);
+
+
+
                                 }}
                                 value={[selectedDate || null, finalDay || null]}
                             />
@@ -279,6 +311,49 @@ export default function Itempage({ catal }) {
                     </Dialog>
                 )}
             </Grid>
+            {errorDisponibilidad && (
+                <Box
+                    sx={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: 2000,
+                        width: "350px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            backgroundColor: "#ffcccc",
+                            borderLeft: "6px solid red",
+                            padding: 3,
+                            borderRadius: 2,
+                            textAlign: "center",
+                            boxShadow: 4,
+                        }}
+                    >
+                        <Typography variant="h6" fontWeight="bold" color="red">
+                            No hay disponibilidad
+                        </Typography>
+                        <Typography sx={{ mt: 1 }}>
+                            No hay disponibilidad en las fechas seleccionadas.
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "red",
+                                mt: 2,
+                                "&:hover": { backgroundColor: "#aa0000" }
+                            }}
+                            onClick={() => setErrorDisponibilidad(false)}
+                        >
+                            Aceptar
+                        </Button>
+                    </Box>
+                </Box>
+            )}
+
 
         </Grid>
     );
