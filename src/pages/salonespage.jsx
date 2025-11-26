@@ -39,7 +39,7 @@ export default function SalonesPage({ cotol }) {
     async function getReservations(roomId, dateStart, dateEnd) {
         try {
             const res = await fetch(
-                `http://localhost:8000/api/reservas/salones/${roomId}/${dateStart}/${dateEnd}`
+                `https://equipo1.ralejandro.com/api/reservas/salones/${roomId}/${dateStart}/${dateEnd}`
             );
 
             if (!res.ok) throw new Error("Error al obtener reservas");
@@ -62,7 +62,7 @@ export default function SalonesPage({ cotol }) {
         try {
             const { isRoom, ...soloBack } = nueva;
 
-            const res = await fetch("http://localhost:8000/api/reservas/salones/", {
+            const res = await fetch("https://equipo1.ralejandro.com/api/reservas/salones/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(soloBack)

@@ -13,7 +13,7 @@ export default function ReservasSalon() {
 
   async function getNameRoom(id) {
   try {
-    const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+    const res = await fetch(`https://equipo1.ralejandro.com/api/rooms/${id}`);
     
     if (!res.ok) {
       return "Sala no encontrada";

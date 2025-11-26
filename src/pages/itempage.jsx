@@ -45,7 +45,7 @@ export default function Itempage({ catal }) {
     async function getReservations(productId, dateStart, dateEnd) {
         try {
             const res = await fetch(
-                `http://localhost:8000/api/reservas/${productId}/${dateStart}/${dateEnd}`
+                `https://equipo1.ralejandro.com/api/reservas/${productId}/${dateStart}/${dateEnd}`
             );
 
             if (!res.ok) throw new Error("Error al obtener reservas");
@@ -72,7 +72,7 @@ const agregarReserva = async (nueva) => {
     try {
         const { isRoom, ...soloBack } = nueva;
 
-        const res = await fetch("http://localhost:8000/api/reservas", {
+        const res = await fetch("https://equipo1.ralejandro.com/api/reservas", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(soloBack) 

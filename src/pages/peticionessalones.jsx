@@ -22,7 +22,7 @@ export default function PeticionesSalones({ catal, setCatal }) {
     const [userDetails, setUserDetails] = useState({});
 
     async function actualizarStatus(id, status) {
-        const res = await fetch(`http://localhost:8000/api/reservas/salones/${id}/status`, {
+        const res = await fetch(`https://equipo1.ralejandro.com/api/reservas/salones/${id}/status`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status })
@@ -32,19 +32,19 @@ export default function PeticionesSalones({ catal, setCatal }) {
     }
 
     async function getResProd() {
-        const res = await fetch("http://localhost:8000/api/reservas/salones/proc");
+        const res = await fetch("https://equipo1.ralejandro.com/api/reservas/salones/proc");
         return await res.json();
     }
 
     async function getName(id) {
-        const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+        const res = await fetch(`https://equipo1.ralejandro.com/api/rooms/${id}`);
         const data = await res.json();
         return data.name;
     }
 
 
     async function getUser(user) {
-        const res = await fetch(`http://localhost:8000/api/users/email/${user}`);
+        const res = await fetch(`https://equipo1.ralejandro.com/api/users/email/${user}`);
         const data = await res.json();
         return {
             img: data.img,
@@ -110,7 +110,7 @@ export default function PeticionesSalones({ catal, setCatal }) {
 
     const manejarStatus = async (id, status) => {
         try {
-            await fetch(`http://localhost:8000/api/reservas/salones/${id}/status`, {
+            await fetch(`https://equipo1.ralejandro.com/api/reservas/salones/${id}/status`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status }),

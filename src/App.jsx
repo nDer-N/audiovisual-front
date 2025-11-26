@@ -64,7 +64,7 @@ export default function App() {
   async function loadUser(user) { 
    const {name, email, img }=user;
    try {
-    const res = await fetch("http://localhost:8000/api/users", {
+    const res = await fetch("https://equipo1.ralejandro.com/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

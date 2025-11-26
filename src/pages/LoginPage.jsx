@@ -8,39 +8,64 @@ export default function LoginPage() {
     loginWithRedirect({ appState: { role: "alumno" } });
   };
 
-  const loginAdmin = () => {
-    loginWithRedirect({ appState: { role: "admin" } });
-  };
-
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#f5f5f5",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         px: 2,
+        backgroundImage:
+          "url('https://buscandouniversidad.com/wp-content/uploads/2011/03/LOGO-UP.png')",
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        backgroundColor: "rgba(0,0,0,0.7)",
+        backgroundBlendMode: "darken",
       }}
     >
+
+      {/* Título perfectamente centrado */}
+      <Typography
+        variant="h3"
+        sx={{
+          color: "white",
+          mb: 4,
+          fontWeight: "bold",
+          textShadow: "2px 2px 6px black",
+          textAlign: "center",
+        }}
+      >
+        Departamento de Audiovisuales
+      </Typography>
+
+      {/* Card centrado */}
       <Card
         sx={{
           width: "100%",
           maxWidth: 420,
           borderRadius: 3,
           boxShadow: 4,
+          textAlign: "center",
+          backdropFilter: "blur(6px)",
         }}
       >
-        <CardContent sx={{ p: 4 }}>
-          <Typography variant="h4" align="center" gutterBottom>
+        <CardContent
+          sx={{
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography variant="h5" gutterBottom>
             Bienvenido
           </Typography>
 
-          <Typography variant="body1" align="center" sx={{ mb: 4, color: "gray.700" }}>
-            Selecciona tu tipo de acceso
-          </Typography>
-
-          <Stack spacing={2}>
+          <Stack spacing={2} sx={{ width: "80%", maxWidth: 300 }}>
             <Button
               variant="contained"
               fullWidth
@@ -53,22 +78,7 @@ export default function LoginPage() {
               }}
               onClick={loginAlumno}
             >
-              Entrar como Alumno
-            </Button>
-
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{
-                bgcolor: "#b4893e",
-                color: "white",
-                py: 1.4,
-                fontSize: "1rem",
-                "&:hover": { bgcolor: "#946f32" },
-              }}
-              onClick={loginAdmin}
-            >
-              Entrar como Administrador
+              Iniciar Sesión
             </Button>
           </Stack>
         </CardContent>

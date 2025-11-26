@@ -22,17 +22,17 @@ export default function ReservasActivasRooms() {
     const navigate = useNavigate();
 
     async function getActive() {
-        const res = await fetch("http://localhost:8000/api/reservas/salones/active");
+        const res = await fetch("https://equipo1.ralejandro.com/api/reservas/salones/active");
         return await res.json();
     }
 
     async function getName(id) {
-        const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+        const res = await fetch(`https://equipo1.ralejandro.com/api/rooms/${id}`);
         return (await res.json()).name;
     }
 
     async function getUser(email) {
-        const res = await fetch(`http://localhost:8000/api/users/email/${email}`);
+        const res = await fetch(`https://equipo1.ralejandro.com/api/users/email/${email}`);
         const data = await res.json();
         return {
             img: data.img,

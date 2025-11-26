@@ -43,7 +43,7 @@ export default function PerfilUsuario({ users }) {
     // Confirma y guarda la advertencia
     const confirmWarning = async () => {
         try {
-            const res = await fetch(`http://localhost:8000/api/users/${id}/warnings`, {
+            const res = await fetch(`https://equipo1.ralejandro.com/api/users/${id}/warnings`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: detalleAdvertencia })
@@ -65,7 +65,7 @@ export default function PerfilUsuario({ users }) {
 
     const deleteWarning = async (warningId) => {
         try {
-            const res = await fetch(`http://localhost:8000/api/users/${id}/warnings/${warningId}`, {
+            const res = await fetch(`https://equipo1.ralejandro.com/api/users/${id}/warnings/${warningId}`, {
                 method: "DELETE",
             });
 

@@ -33,13 +33,13 @@ export default function PerfilUsuario() {
   const [reservasRooms, setReservasRooms] = useState([]);
 
   async function getName(id) {
-    const res = await fetch(`http://localhost:8000/api/products/${id}`);
+    const res = await fetch(`https://equipo1.ralejandro.com/api/products/${id}`);
     const data = await res.json();
     return data.name;
   }
 
   async function getNameRoom(id) {
-    const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+    const res = await fetch(`https://equipo1.ralejandro.com/api/rooms/${id}`);
     const data = await res.json();
     return data.name;
   }
@@ -49,7 +49,7 @@ export default function PerfilUsuario() {
   useEffect(() => {
     async function fetchReservas() {
       try {
-        const res = await fetch(`http://localhost:8000/api/reservas/${user.email}`);
+        const res = await fetch(`https://equipo1.ralejandro.com/api/reservas/${user.email}`);
         const data = await res.json();
         setReservas(data);
       } catch (err) {
@@ -65,7 +65,7 @@ export default function PerfilUsuario() {
    useEffect(() => {
     async function fetchReservasRooms() {
       try {
-        const res = await fetch(`http://localhost:8000/api/reservas/salones/${user.email}`);
+        const res = await fetch(`https://equipo1.ralejandro.com/api/reservas/salones/${user.email}`);
         const data = await res.json();
         setReservasRooms(data);
       } catch (err) {
@@ -82,7 +82,7 @@ export default function PerfilUsuario() {
   useEffect(() => {
     async function fetchWarnings() {
       try {
-        const res = await fetch(`http://localhost:8000/api/users/warnings/${user.email}`);
+        const res = await fetch(`https://equipo1.ralejandro.com/api/users/warnings/${user.email}`);
         const data = await res.json();
 
         if (Array.isArray(data)) {

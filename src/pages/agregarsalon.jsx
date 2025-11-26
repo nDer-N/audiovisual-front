@@ -17,7 +17,7 @@ export default function AgregarSalon() {
         }
 
         try {
-            const res = await fetch("http://localhost:8000/api/rooms", {
+            const res = await fetch("https://equipo1.ralejandro.com/api/rooms", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
