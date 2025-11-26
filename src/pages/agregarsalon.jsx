@@ -1,46 +1,41 @@
-import React from 'react'
-import { useState } from "react";
-import { Box, Paper, Typography, TextField } from "@mui/material";
-import { Button } from '@mui/material';
-import { useNavigate } from 'react-router';
-import { useAppContext } from '../context/AppContext';
+import React, { useState } from "react";
+import { Box, Paper, Typography, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router";
+import { useAppContext } from "../context/AppContext";
 
 export default function AgregarSalon() {
     const navigate = useNavigate();
-    const { setNuevoSalon } = useAppContext();
-    const [agregarnombre, setAgregarNombre] = useState("");
-    const [agregardescripcion, setAgregarDescripcion] = useState("");
-    const [agregarimagen, setAgregarImagen] = useState(null);
-    const [previewimagen, setPreviewImagen] = useState(null);
-    const [agregarid, setAgregarId] = useState("");
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setAgregarImagen(file);
+    
+    const [nombre, setNombre] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [imagenUrl, setImagenUrl] = useState("");
 
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviewImagen(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    const handleGuardar = () => {
-        if (!agregarid || !agregarnombre || !agregardescripcion || !agregarimagen) {
+    const handleGuardar = async () => {
+        if (!nombre || !descripcion || !imagenUrl) {
             alert("Por favor completa todos los campos.");
             return;
         }
 
-        const nuevosalon = {
-            id: Number(agregarid),
-            name: agregarnombre,
-            description: agregardescripcion,
-            image: previewimagen,
-        };
+        try {
+            const res = await fetch("http://localhost:8000/api/rooms", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: nombre,
+                    description: descripcion,
+                    img: imagenUrl
+                })
+            });
 
-        setNuevoSalon(nuevosalon);
-        navigate("/gestionar-salones");
+            if (!res.ok) throw new Error("Error al guardar el salón.");
+            navigate("/gestionar-salones");
+
+        } catch (error) {
+            console.error(error);
+            alert("No se pudo guardar el salón.");
+        }
     };
+
     return (
         <Box
             sx={{
@@ -55,7 +50,7 @@ export default function AgregarSalon() {
             <Paper
                 sx={{
                     width: "800px",
-                    minHeight: "600px",
+                    minHeight: "500px",
                     padding: 4,
                     borderRadius: 4,
                     boxShadow: 5,
@@ -66,28 +61,13 @@ export default function AgregarSalon() {
                     Agregar Salón al Catálogo
                 </Typography>
 
-                {/* ID */}
-                <TextField
-                    label="ID del salón"
-                    variant="outlined"
-                    fullWidth
-                    value={agregarid}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (/^\d*$/.test(value)) {
-                            setAgregarId(value);
-                        }
-                    }}
-                    sx={{ mb: 2 }}
-                />
-
                 {/* Nombre */}
                 <TextField
                     label="Nombre del salón"
                     variant="outlined"
                     fullWidth
-                    value={agregarnombre}
-                    onChange={(e) => setAgregarNombre(e.target.value)}
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
                     sx={{ mb: 2 }}
                 />
 
@@ -98,30 +78,26 @@ export default function AgregarSalon() {
                     fullWidth
                     multiline
                     minRows={3}
-                    value={agregardescripcion}
-                    onChange={(e) => setAgregarDescripcion(e.target.value)}
+                    value={descripcion}
+                    onChange={(e) => setDescripcion(e.target.value)}
                     sx={{ mb: 2 }}
                 />
 
-                {/* Imagen */}
-                <Typography fontWeight="bold" sx={{ mb: 1 }}>
-                    Imagen del salón:
-                </Typography>
-                <Button variant="contained" component="label" sx={{ mb: 2 }}>
-                    Subir imagen
-                    <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
-                </Button>
+                {/* Imagen URL */}
+                <TextField
+                    label="URL de la imagen"
+                    variant="outlined"
+                    fullWidth
+                    value={imagenUrl}
+                    onChange={(e) => setImagenUrl(e.target.value)}
+                    sx={{ mb: 2 }}
+                />
 
-                {previewimagen && (
-                    <Box
-                        sx={{
-                            mt: 2,
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
+                {/* Vista previa */}
+                {imagenUrl && (
+                    <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                         <img
-                            src={previewimagen}
+                            src={imagenUrl}
                             alt="preview"
                             style={{
                                 width: "300px",
@@ -132,7 +108,7 @@ export default function AgregarSalon() {
                     </Box>
                 )}
 
-                {/* Botón Guardar */}
+                {/* Guardar */}
                 <Button
                     variant="contained"
                     color="success"

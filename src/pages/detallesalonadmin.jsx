@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function DetalleSalonAdmin({ cotol }) {
     const { id } = useParams();
-    const salon = cotol.find((p) => p.id === Number(id));
+    const salon = cotol.find((p) => p._id === id);
     const navigate = useNavigate();
 
     return (
