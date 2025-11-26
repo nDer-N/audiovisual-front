@@ -39,15 +39,6 @@ import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
 
 export default function App() {
    const [users, setUsers]=useState(); 
-
-   useEffect(() => {
-    async function loadUsers() {
-      const data = await getUsers(); // ← aquí ya es el arreglo real
-      setUsers(data);
-    }
-    loadUsers();
-  }, []);
-
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
   
@@ -59,6 +50,8 @@ export default function App() {
       setCatal(data);
       const data2 = await getSalones();
       setCotol(data2);
+      const data3 = await getUsers();
+      setUsers(data3);
     }
     loadInv();
   }, [location.pathname]);
