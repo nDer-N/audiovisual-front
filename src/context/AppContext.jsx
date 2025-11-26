@@ -32,19 +32,19 @@ export const AppProvider = ({ children }) => {
   const [themeColor, setThemeColor] = useState("#b4893e");
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
-  // ----------- PROCESAR al usuario cuando Auth0 cambie -----------
+ 
   useEffect(() => {
     if (isAuthenticated && auth0User) {
       const processedUser = {
         name: auth0User.name,
         email: auth0User.email,
-        picture: auth0User.picture,
+        img: auth0User.picture,
       };
 
       setUser(processedUser);
 
       // Validar si es admin (email o claim)
-      const adminEmails = ["admin@up.edu.mx"];
+      const adminEmails = ["admin@up.edu.mx", ];
 
       const userIsAdmin =
         adminEmails.includes(auth0User.email) ||

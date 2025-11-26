@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -20,11 +20,128 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { useAppContext } from "../context/AppContext";
+
 import { useNavigate } from "react-router";
 
 export default function PerfilUsuario() {
   const { user, logout, isAdmin } = useAppContext();
+  const [warnings, setWarnings] = useState([]);
+  const [productNames, setProductNames] = useState({});
+  const [roomNames, setRoomNames] = useState({});
   const navigate = useNavigate();
+  const [reservas, setReservas] = useState([]);
+  const [reservasRooms, setReservasRooms] = useState([]);
+
+  async function getName(id) {
+    const res = await fetch(`http://localhost:8000/api/products/${id}`);
+    const data = await res.json();
+    return data.name;
+  }
+
+  async function getNameRoom(id) {
+    const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+    const data = await res.json();
+    return data.name;
+  }
+
+
+
+  useEffect(() => {
+    async function fetchReservas() {
+      try {
+        const res = await fetch(`http://localhost:8000/api/reservas/${user.email}`);
+        const data = await res.json();
+        setReservas(data);
+      } catch (err) {
+        console.error("Error cargando reservas:", err);
+      }
+    }
+
+    if (user?.email) {
+      fetchReservas();
+    }
+  }, [user]);
+
+   useEffect(() => {
+    async function fetchReservasRooms() {
+      try {
+        const res = await fetch(`http://localhost:8000/api/reservas/salones/${user.email}`);
+        const data = await res.json();
+        setReservasRooms(data);
+      } catch (err) {
+        console.error("Error cargando reservas:", err);
+      }
+    }
+
+    if (user?.email) {
+      fetchReservasRooms();
+    }
+  }, [user]);
+
+
+  useEffect(() => {
+    async function fetchWarnings() {
+      try {
+        const res = await fetch(`http://localhost:8000/api/users/warnings/${user.email}`);
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setWarnings(data);
+        } else {
+          setWarnings([]);
+        }
+      } catch (err) {
+        console.error("Error cargando warnings:", err);
+      }
+    }
+
+    if (user?.email) {
+      fetchWarnings();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    async function loadNames() {
+      const names = {};
+
+      for (const item of reservas) {
+        if (!productNames[item.productId]) {
+          const name = await getName(item.productId);
+          names[item.productId] = name;
+        }
+      }
+
+      if (Object.keys(names).length > 0) {
+        setProductNames(prev => ({ ...prev, ...names }));
+      }
+    }
+
+    if (reservas.length > 0) {
+      loadNames();
+    }
+  }, [reservas]);
+
+  useEffect(() => {
+    async function loadNamesR() {
+      const names = {};
+
+      for (const item of reservasRooms) {
+        if (!roomNames[item.roomId]) {
+          const name = await getNameRoom(item.roomId);
+          names[item.roomId] = name;
+        }
+      }
+
+      if (Object.keys(names).length > 0) {
+        setRoomNames(prev => ({ ...prev, ...names }));
+      }
+    }
+
+    if (reservasRooms.length > 0) {
+      loadNamesR();
+    }
+  }, [reservasRooms]);
+
 
   const handleGoHome = () => {
     navigate("/");
@@ -127,7 +244,7 @@ export default function PerfilUsuario() {
             bgcolor: "black",
             mb: 3,
           }}
-          src={user.picture}
+          src={user.img}
         />
 
         <Typography sx={{ fontSize: "26px", fontWeight: "500", right: -700, position: "relative" }}>
@@ -245,10 +362,10 @@ export default function PerfilUsuario() {
             right: -200,
             mb: 3,
           }}
-          src={user.picture}
+          src={user.img}
         />
 
-        <Typography sx={{ fontSize: "26px", fontWeight: "500", right: -300, position: "relative"  }}>
+        <Typography sx={{ fontSize: "26px", fontWeight: "500", right: -300, position: "relative" }}>
           Detalles del perfil
         </Typography>
 
@@ -299,8 +416,34 @@ export default function PerfilUsuario() {
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography fontWeight="500">Equipos</Typography>
             </AccordionSummary>
+
             <AccordionDetails>
-              <Typography color="gray">Especificaciones generales</Typography>
+              {reservas.length === 0 ? (
+                <Typography color="gray">No tienes reservas aún.</Typography>
+              ) : (
+                reservas.map((r) => (
+                  <Box
+                    key={r._id}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: "8px",
+                      bgcolor: "#eef2ff",
+                      borderLeft: "4px solid #7aa0ff",
+                    }}
+                  >
+                    <Typography fontWeight="600">{productNames[r.productId] || "Cargando..."}</Typography>
+
+                    <Typography>Fecha inicio: {new Date(r.dateStart).toLocaleDateString()}</Typography>
+                    <Typography>Fecha fin: {new Date(r.dateEnd).toLocaleDateString()}</Typography>
+                    <Typography>Cantidad: {r.quantity}</Typography>
+
+                    <Typography sx={{ mt: 1 }}>
+                      Estado: <b>{r.status}</b>
+                    </Typography>
+                  </Box>
+                ))
+              )}
             </AccordionDetails>
           </Accordion>
 
@@ -308,21 +451,72 @@ export default function PerfilUsuario() {
             <AccordionSummary expandIcon={<AddIcon />}>
               <Typography fontWeight="500">Salones</Typography>
             </AccordionSummary>
-          </Accordion>
+          
+           <AccordionDetails>
+              {reservasRooms.length === 0 ? (
+                <Typography color="gray">No tienes reservas aún.</Typography>
+              ) : (
+                reservasRooms.map((r) => (
+                  <Box
+                    key={r._id}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: "8px",
+                      bgcolor: "#eef2ff",
+                      borderLeft: "4px solid #7aa0ff",
+                    }}
+                  >
+                    <Typography fontWeight="600">{roomNames[r.roomId] || "Cargando..."}</Typography>
 
-          <Accordion expanded disableGutters>
-            <AccordionSummary>
+                    <Typography>Fecha inicio: {new Date(r.dateStart).toLocaleDateString()}</Typography>
+                    <Typography>Fecha fin: {new Date(r.dateEnd).toLocaleDateString()}</Typography>
+                    <Typography sx={{ mt: 1 }}>
+                      Estado: <b>{r.status}</b>
+                    </Typography>
+                  </Box>
+                ))
+              )}
+            </AccordionDetails>
+            </Accordion>
+
+          <Accordion disableGutters>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography fontWeight="500">Advertencias</Typography>
             </AccordionSummary>
+
             <AccordionDetails>
-              <Box sx={{ borderLeft: "4px solid #7aa0ff", pl: 1.5 }}>
-                <Typography color="gray">
-                  Tincidunt purus at amet, eu nisl urna at. Pellentesque diam
-                  dictum consectetur leo ipsum. Lectus gravida id aliquamc
-                </Typography>
-              </Box>
+              {warnings.length === 0 ? (
+                <Typography color="gray">No tienes advertencias.</Typography>
+              ) : (
+                warnings.map((w, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: "8px",
+                      bgcolor: "#ffe6e6",
+                      borderLeft: "4px solid red",
+                    }}
+                  >
+                    <Typography fontWeight="600" color="red">
+                      Advertencia {i + 1}
+                    </Typography>
+
+                    <Typography sx={{ mt: 1 }}>
+                      {w.message}
+                    </Typography>
+
+                    <Typography sx={{ mt: 1, fontSize: "14px", color: "gray" }}>
+                      Fecha: {new Date(w.date).toLocaleDateString()}
+                    </Typography>
+                  </Box>
+                ))
+              )}
             </AccordionDetails>
           </Accordion>
+
         </Paper>
 
         {/* Logout */}

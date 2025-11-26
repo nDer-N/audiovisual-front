@@ -1,133 +1,134 @@
-import React from "react";
-import { Box, Card, CardContent, CardMedia, Typography, Button, Grid } from "@mui/material";
-import App from "../App";
+import { useEffect, useState } from "react";
+import { Box, Grid, Card, CardContent, Typography } from "@mui/material";
+import {getreservasSalon} from "./reservacionSalon"
 import { useAppContext } from "../context/AppContext";
-import { reservacionSalon } from "./reservacionSalon";
 
+export default function ReservasSalon() {
 
-export default function FiltroSalon({ catal, cotol }) {
-  const { reser, setReser } = useAppContext();
-  
-  const actualizarEstado = (id, nuevoStatus) => {
-    setReser(prev =>
-      prev.map(r => (r.id === id ? { ...r, status: nuevoStatus } : r))
-    );
-  };
+  const { user } = useAppContext(); // ← asegúrate que aquí tienes user.username o user.email
+  const [reservasSalon, setReservasSalon] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [roomNames, setRoomNames] = useState({});
+ 
 
-  const cancelarReserva = (id) => {
-    const confirmacion = window.confirm("¿Estás seguro de que quieres cancelar la reserva?");
-    if (!confirmacion) return;
-    setReser(prev => prev.filter(r => r.id !== id));
-    console.log(reservacionSalon);
-  };
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "aceptada":
-        return "#4caf50";
-      case "rechazada":
-        return "#d32f2f";
-      default:
-        return "#ffb300";
+  async function getNameRoom(id) {
+  try {
+    const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+    
+    if (!res.ok) {
+      return "Sala no encontrada";
     }
-  };
+
+    const data = await res.json();
+
+    if (!data || !data.name) {
+      return "Sala desconocida";
+    }
+
+    return data.name;
+
+  } catch (err) {
+    console.error("Error al cargar sala:", err);
+    return "Error al cargar sala";
+  }
+}
+
+
+  useEffect(() => {
+    async function loadNamesR() {
+      const names = {};
+
+      for (const item of reservasSalon) {
+        if (!roomNames[item.roomId]) {
+          const name = await getNameRoom(item.roomId);
+          console.log(name, item.roomId);
+          names[item.roomId] = name;
+        }
+      }
+
+      if (Object.keys(names).length > 0) {
+        setRoomNames(prev => ({ ...prev, ...names }));
+      }
+    }
+
+    if (reservasSalon.length > 0) {
+      loadNamesR();
+    }
+  }, [reservasSalon]);
+
+
+  useEffect(() => {
+
+    async function cargarReservas() {
+      try {
+        if (!user) return;
+
+        const data = await getreservasSalon(user.email); 
+        setReservasSalon(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error al cargar reservas:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    cargarReservas();
+  }, [user]);
+
+  if (loading) {
+    return <Typography textAlign="center" mt={4}>Cargando reservas...</Typography>;
+  }
 
   return (
-    <Box
-      p={4}
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}
-    >
-      <Box sx={{ width: "85%", bgcolor: "#eee9df", borderRadius: 3, p: 4, boxShadow: 3 }}>
+    <Box p={4} sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ width: "85%", bgcolor: "#eee9df", borderRadius: 3, p: 4 }}>
 
-        {/* Si no hay reservas */}
-        {reservacionSalon.length === 0 ? (
+        {reservasSalon.length === 0 ? (
           <Typography variant="h5" textAlign="center" mt={4}>
             No tienes ninguna reserva.
           </Typography>
         ) : (
-          <Grid container spacing={6} justifyContent="center">
-            {reservacionSalon.map((item) => (
-              <Grid container item key={item.id} sx={{ maxWidth: 900 }}>
+          <Grid container spacing={4} justifyContent="center">
+            {reservasSalon.map((item) => (
+              <Grid item key={item._id} xs={12} md={8}>
+                <Card sx={{ p: 2, borderRadius: 3 }}>
+                  <CardContent>
 
-                {/* Imagen }
-                <Grid item >
-                  <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-                    <CardMedia
-                      component="img"
-                      image={item.image}
-                      alt={item.name}
-                      sx={{ height: 280, objectFit: "contain", p: 1, minHeight: 400, width: 400 }}
-                    />
-                  </Card>
-                </Grid>*/}
+                    <Typography variant="h5" fontWeight="bold" mb={1}>
+                     {roomNames[item.roomId] || "Cargando..."}
+                    </Typography>
 
-                {/* Información */}
-                <Grid item >
-                  <Card sx={{ p: 2, borderRadius: 3 }}>
-                    <CardContent>
 
-                      {/* Nombre */}
-                      <Typography variant="h5" fontWeight="bold" mb={1}>
-                        {item.name}
-                      </Typography>
+                    <Typography variant="body1" mb={1}>
+                      <strong>Inicio:</strong>{" "}
+                      {new Date(item.dateStart).toLocaleString()}
+                    </Typography>
 
-                      {/* Descripcion */}
-                      <Typography variant="body1" color="text.secondary" mb={1}>
-                        {item.description}
-                      </Typography>
+                    <Typography variant="body1" mb={1}>
+                      <strong>Fin:</strong>{" "}
+                      {new Date(item.dateEnd).toLocaleString()}
+                    </Typography>
 
-                      {/* Solo sale la cantidad si no es Salon */}
-                      {!item.isRoom && (
-                        <Typography variant="body1" mb={1}>
-                          <strong>Cantidad:</strong> {item.quantity}
-                        </Typography>
-                      )}
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color:
+                          item.status === "accepted"
+                            ? "green"
+                            : item.status === "proceso"
+                            ? "orange"
+                            : "red",
+                      }}
+                    >
+                      Estado: {item.status}
+                    </Typography>
 
-                      {/* Fecha */}
-                      <Typography variant="body1">
-                        <strong>Fecha reservada:</strong> {item.day}/{item.month}/{item.year}
-                      </Typography>
-                      <Typography variant="body1">
-                        <strong>Fecha de Entrega:</strong> {item.finalday}/{item.finalmonth}/{item.finalyear}
-                      </Typography>
-
-                      {/* Estado de la peticion */}
-                      <Typography
-                        sx={{
-                          mt: 2,
-                          fontWeight: "bold",
-                          color: getStatusColor(item.status),
-                          fontSize: "1.1rem"
-                        }}
-                      >
-                        Estado: {item.status}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                {/* Botón cancelar */}
-                <Grid textAlign="center" display="flex" alignItems="center">
-                  <Button
-                    variant="contained"
-                    onClick={() => cancelarReserva(item.id)}
-                    sx={{
-                      bgcolor: "#e8a6a6",
-                      color: "#8c0000",
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      fontSize: "1rem",
-                      "&:hover": { bgcolor: "#d98d8d" },
-                    }}
-                  >
-                    Cancelar reserva
-                  </Button>
-                </Grid>
-
+                  </CardContent>
+                </Card>
               </Grid>
             ))}
           </Grid>
-
         )}
       </Box>
     </Box>
