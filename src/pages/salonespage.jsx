@@ -37,7 +37,7 @@ export default function SalonesPage({ cotol }) {
     async function getReservations(roomId, dateStart, dateEnd) {
         try {
             const res = await fetch(
-                `http://localhost:8000/api/reservas/${roomId}/${dateStart}/${dateEnd}`
+                `http://localhost:8000/api/reservas/salones/${roomId}/${dateStart}/${dateEnd}`
             );
 
             if (!res.ok) throw new Error("Error al obtener reservas");
@@ -206,13 +206,13 @@ export default function SalonesPage({ cotol }) {
 
                                     setSelectedDate(start);
                                     setFinalDay(end);
-
+                                     
 
                                     const overlap = await getReservations(salones._id, start, end);
 
                                     console.log("Reservas:", overlap);
                                     const total = overlap.length;
-                                    console.log(total);
+                                    
                                     if (total > 0) {
                                         setAvailable(0);
                                     } else {
