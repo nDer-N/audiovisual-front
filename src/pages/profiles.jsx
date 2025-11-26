@@ -7,8 +7,8 @@ import {useState, useEffect} from 'react';
 export default function Profiles({users}) {
    
     const navigate = useNavigate();
-    const handleClick = (_id) => {
-    navigate(`/informacio-de-los-perfiles/${_id}`);
+    const handleClick = (id) => {
+    navigate(`/informacion-de-los-perfiles/${id}`);
   };
 
     return (
@@ -24,7 +24,7 @@ export default function Profiles({users}) {
             <Box sx={{ width: "70%" }}>
                 <Grid container direction="column" spacing={3}>
                     {users.map((user) => (
-                        <Grid key={user.id}>
+                        <Grid key={user._id}>
                             <Card
                                 sx={{
                                     display: "flex",
@@ -41,7 +41,7 @@ export default function Profiles({users}) {
                                         py: 2,
                                         px: 2
                                     }}
-                                    onClick={() => handleClick(user.id)}
+                                    onClick={() => handleClick(user._id)}
                                 >
                                     {/* Imagen del usuario */}
                                     <Box

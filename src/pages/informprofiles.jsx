@@ -20,11 +20,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 
-export default function PerfilUsuario() {
-    const { id } = useParams();
-    const userQ = users.find((p) => p.id === Number(id));
+export default function PerfilUsuario({ users }) {
 
-    const [advertencias, setAdvertencias] = useState([]);
+    const { id } = useParams();
+    console.log(id);
+    const userQ = users.find((p) => p._id === id);
+    console.log(userQ);
+
+    const [advertencias, setAdvertencias] = useState(userQ.warnings || []);
     const [openDialog, setOpenDialog] = useState(false);
     const [detalleAdvertencia, setDetalleAdvertencia] = useState("");
 
@@ -38,11 +41,46 @@ export default function PerfilUsuario() {
     };
 
     // Confirma y guarda la advertencia
-    const confirmWarning = () => {
-        const nueva = `Advertencia #${advertencias.length + 1}: ${detalleAdvertencia}`;
-        setAdvertencias(prev => [...prev, nueva]);
-        closeWarningDialog();
+    const confirmWarning = async () => {
+        try {
+            const res = await fetch(`http://localhost:8000/api/users/${id}/warnings`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: detalleAdvertencia })
+            });
+
+            if (!res.ok) throw new Error("Error al guardar advertencia");
+
+            const data = await res.json();
+
+            setAdvertencias(data.user.warnings);
+
+            closeWarningDialog();
+
+        } catch (err) {
+            console.error(err);
+            alert("Hubo un error guardando la advertencia");
+        }
     };
+
+    const deleteWarning = async (warningId) => {
+        try {
+            const res = await fetch(`http://localhost:8000/api/users/${id}/warnings/${warningId}`, {
+                method: "DELETE",
+            });
+
+            if (!res.ok) throw new Error("Error eliminando warning");
+
+            const data = await res.json();
+
+            setAdvertencias(data.warnings);
+
+        } catch (err) {
+            console.error(err);
+            alert("Hubo un error eliminando la advertencia");
+        }
+    };
+
 
     return (
         <Box
@@ -61,7 +99,7 @@ export default function PerfilUsuario() {
                     {/* Imagen */}
                     <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
                         <img
-                            src={userQ.image}
+                            src={userQ.img}
                             alt={userQ.name}
                             style={{
                                 width: 180,
@@ -126,17 +164,38 @@ export default function PerfilUsuario() {
                                     Sin advertencias registradas.
                                 </Typography>
                             ) : (
-                                advertencias.map((a, i) => (
+                                advertencias.map((a) => (
                                     <Box
-                                        key={i}
+                                        key={a._id}
                                         sx={{
                                             borderLeft: "4px solid #5d71dd",
                                             pl: 2,
                                             py: 1,
                                             mb: 1,
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center"
                                         }}
                                     >
-                                        <Typography>{a}</Typography>
+                                        <Box>
+                                            <Typography sx={{ fontWeight: 600 }}>{a.message}</Typography>
+                                            <Typography sx={{ fontSize: 12, color: "gray" }}>
+                                                {new Date(a.date).toLocaleString()}
+                                            </Typography>
+                                        </Box>
+
+                                        {/* BOTÓN X */}
+                                        <Button
+                                            onClick={() => deleteWarning(a._id)}
+                                            sx={{
+                                                minWidth: "32px",
+                                                color: "red",
+                                                fontWeight: 900,
+                                                fontSize: "18px"
+                                            }}
+                                        >
+                                            ✕
+                                        </Button>
                                     </Box>
                                 ))
                             )}

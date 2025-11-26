@@ -39,6 +39,7 @@ import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
 
 export default function App() {
    const [users, setUsers]=useState(); 
+
    useEffect(() => {
     async function loadUsers() {
       const data = await getUsers(); // ← aquí ya es el arreglo real
@@ -90,7 +91,7 @@ export default function App() {
             <Route path="/peticiones-salones" element={<PeticionesSalones cotol={cotol} setCotol={setCotol} />}/>
             <Route path="/peticiones-productos" element={<PeticionesProductos catal={catal} setCatal={setCatal}/>}/>
             <Route path="/perfiles" element={<Profiles users={users}/> }/>
-            <Route path="/informacio-de-los-perfiles/:id" element={<InformProfiles/>}/>
+            <Route path="/informacion-de-los-perfiles/:id" element={<InformProfiles users={users}/>}/>
             <Route path="/faq" element={<FAQ />} />
             <Route path="/Usuario" element={<Usuario />} />
           </Routes>
