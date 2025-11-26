@@ -127,7 +127,7 @@ export default function PerfilUsuario() {
             bgcolor: "black",
             mb: 3,
           }}
-          src={user.picture}
+          src={user.img}
         />
 
         <Typography sx={{ fontSize: "26px", fontWeight: "500", right: -700, position: "relative" }}>
@@ -245,7 +245,7 @@ export default function PerfilUsuario() {
             right: -200,
             mb: 3,
           }}
-          src={user.picture}
+          src={user.img}
         />
 
         <Typography sx={{ fontSize: "26px", fontWeight: "500", right: -300, position: "relative"  }}>

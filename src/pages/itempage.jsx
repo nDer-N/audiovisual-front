@@ -14,7 +14,8 @@ import { useAppContext } from '../context/AppContext';
 
 export default function Itempage({ catal }) {
     const { id } = useParams();
-    const producto = catal.find((p) => p.id === Number(id));
+    const producto = catal.find(p => p._id === id);
+    console.log(producto);
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openTerms, setOpenTerms] = useState(false);
@@ -167,7 +168,7 @@ export default function Itempage({ catal }) {
                                 const mes = parseInt(selectedDate.month() + 1, 10);
                                 const año = parseInt(selectedDate.year(), 10);
                                 agregarReserva({
-                                    id: producto.id,
+                                    id: producto._id,
                                     date: selectedDate,
                                     quantity: cantida,
                                     day: dia,

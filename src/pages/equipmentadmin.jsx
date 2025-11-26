@@ -8,11 +8,33 @@ import { useEffect } from 'react';
 export default function EquipmentAdmin({ catal, setCatal }) {
   const navigate = useNavigate();
   const { isAdmin, nuevoproducto, setNuevoProducto } = useAppContext();
-  console.log(nuevoproducto);
+ 
 
-  const eliminarProducto = (id) => {
-    setCatal((prev) => prev.filter((item) => item.id !== id));
-  };
+  const eliminarProducto = async (id) => {
+  if (!confirm("¿Seguro que quieres eliminar este producto?")) return;
+
+  try {
+    const res = await fetch(`http://localhost:8000/api/products/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Error en DELETE:", errorData);
+      alert("No se pudo eliminar el producto.");
+      return;
+    }
+
+    // Si el backend elimina correctamente → borra también en el front
+    setCatal((prev) => prev.filter((item) => item._id !== id));
+
+    alert("Producto eliminado correctamente.");
+  } catch (error) {
+    console.error("Error al eliminar:", error);
+    alert("Error al intentar eliminar el producto.");
+  }
+};
+
   const irADetalle = (id) => {
     navigate(`/detalle-equipo/${id}`);
   };
@@ -50,10 +72,10 @@ export default function EquipmentAdmin({ catal, setCatal }) {
     <Box p={4}>
       <Grid container spacing={7} justifyContent="center">
         {catal.map((item) => (
-          <Grid key={item.id}>
+          <Grid key={item._id}>
             <Card sx={{ p: 2, position: 'relative', borderRadius: 3, boxShadow: 3 }}>
               <Button
-                onClick={() => eliminarProducto(item.id)}
+                onClick={() => eliminarProducto(item._id)}
                 sx={{
                   minWidth: 0,
                   width: 28,
@@ -94,7 +116,7 @@ export default function EquipmentAdmin({ catal, setCatal }) {
                 image={item.img}
                 alt={item.name}
                 sx={{ height: 420, objectFit: 'contain', cursor: 'pointer', borderRadius: 2 }}
-                onClick={() => irADetalle(item.id)}
+                onClick={() => irADetalle(item._id)}
               />
 
               <CardContent>

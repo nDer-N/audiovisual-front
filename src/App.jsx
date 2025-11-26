@@ -18,11 +18,11 @@ import FAQ from "./pages/FAQ";
 import Itempage from "./pages/itempage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import EquipmentAdmin from "./pages/EquipmentAdmin";
-import productos from "./pages/productos";
+import {getProductos} from "./pages/productos";
 import DetalleAdmin from "./pages/detalleadmin";
 import EditarEquipo from "./pages/editarequipo";
 import AgregarEquipo from "./pages/agregarequipo";
-import salones from "./pages/salones";
+import {getSalones} from "./pages/salones";
 import SalonesPage from "./pages/salonespage";
 import ConfirmarSalon from "./pages/confirmarsalon";
 import SalonesAdmin from "./pages/salonesadmin";
@@ -50,8 +50,55 @@ export default function App() {
 
   const { isAuthenticated, user, isLoading, isAdmin } = useAppContext();
   const location = useLocation();
-  const [catal, setCatal] = useState(productos);
-  const [cotol,setCotol]=useState(salones);
+  
+  const [catal, setCatal] = useState([]);
+  const [cotol,setCotol]=useState([]);
+  useEffect(() => {
+    async function loadInv() {
+      const data = await getProductos(); // ← aquí ya es el arreglo real
+      setCatal(data);
+      const data2 = await getSalones();
+      setCotol(data2);
+    }
+    loadInv();
+  }, [location.pathname]);
+
+  console.log(catal);
+
+  async function loadUser(user) { 
+   const {name, email, img }=user;
+   try {
+    const res = await fetch("http://localhost:8000/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        warnings:[],
+        img
+      })
+    });
+
+    const data = await res.json();
+    console.log("Usuario cargado o creado:", data);
+    return data;
+
+  } catch (error) {
+    console.error("Error en loadUser:", error);
+    return null;
+  }
+
+  }
+
+  useEffect(() => {
+    if (isAuthenticated && user && !isAdmin) {
+      loadUser(user)
+      console.log(user);   
+    }
+  }, [isAuthenticated, user]);
+  
 
   if (isLoading) return <p>Cargando...</p>;
 
@@ -63,6 +110,8 @@ export default function App() {
   ) : !isValidEmail ? (
     <AccessDenied />
   ) : (
+    //crear objeto user
+    
     <Box sx={{ display: "flex" }}>
       <SideMenu isAdmin={isAdmin} />
 
@@ -75,13 +124,13 @@ export default function App() {
             <Route path="/reservar-equipo" element={<ReservarEquipo catal={catal} />} />
             <Route path="/reservar-salones" element={<ReservarSalones cotol={cotol} />} />
             <Route path="/salon/:id" element={<SalonesPage cotol={cotol}/>}/>
-            <Route path="/confirmacion-del-salon/:id" element={<ConfirmarSalon />} />
+            <Route path="/confirmacion-del-salon/:id" element={<ConfirmarSalon cotol={cotol} />} />
             <Route path="/gestionar-salones" element={<SalonesAdmin cotol={cotol} setCotol={setCotol} />} />
             <Route path="/agregar-salones" element={<AgregarSalon cotol={cotol} setCotol={setCotol} />} />
             <Route path="/detalle-salon/:id" element={<DetalleSalonAdmin cotol={cotol} />} />
             <Route path="/mis-reservas" element={<MisReservas catal={catal} cotol={cotol}/>} />
-            <Route path="/producto/:id" element={<Itempage catal={catal} />} />
-            <Route path="/confirmacion/:id" element={<ConfirmationPage />} />
+            <Route path="/producto/:id" element={<Itempage catal={catal} />} /> 
+            <Route path="/confirmacion/:id" element={<ConfirmationPage catal={catal}/>} />
             <Route path="/gestionar-equipo" element={<EquipmentAdmin catal={catal} setCatal={setCatal} />} />
             <Route path="/detalle-equipo/:id" element={<DetalleAdmin catal={catal} />} />
             <Route path="/edicion/:id" element={<EditarEquipo catal={catal} setCatal={setCatal} />} />
