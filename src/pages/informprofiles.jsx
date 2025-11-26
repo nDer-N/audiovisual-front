@@ -27,6 +27,8 @@ export default function PerfilUsuario({ users }) {
     const userQ = users.find((p) => p._id === id);
     console.log(userQ);
 
+    const googleImg = userQ.img?.replace(/=s96-c$/, "=s400");
+
     const [advertencias, setAdvertencias] = useState(userQ.warnings || []);
     const [openDialog, setOpenDialog] = useState(false);
     const [detalleAdvertencia, setDetalleAdvertencia] = useState("");
@@ -99,7 +101,7 @@ export default function PerfilUsuario({ users }) {
                     {/* Imagen */}
                     <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
                         <img
-                            src={userQ.img}
+                            src={googleImg}
                             alt={userQ.name}
                             style={{
                                 width: 180,
