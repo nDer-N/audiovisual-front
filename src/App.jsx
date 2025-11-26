@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import LoginPage from "./pages/LoginPage";
 import AccessDenied from "./pages/AccessDenied";
 import ReservasActivas from "./pages/ReservasActivas";
+import ReservasActivasRooms from "./pages/ReservasActivasRooms";
 import Home from "./pages/Home";
 import ReservarEquipo from "./pages/ReservarEquipo";
 import ReservarSalones from "./pages/ReservarSalones";
@@ -137,6 +138,7 @@ export default function App() {
             <Route path="/faq" element={<FAQ />} />
             <Route path="/Usuario" element={<Usuario />} />
             <Route path="/reservas-activas" element={<ReservasActivas />} />
+             <Route path="/reservas-activas-rooms" element={<ReservasActivasRooms />} />
           </Routes>
         </Box>
 
