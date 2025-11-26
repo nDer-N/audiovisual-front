@@ -26,8 +26,25 @@ import { useNavigate } from "react-router";
 export default function PerfilUsuario() {
   const { user, logout, isAdmin } = useAppContext();
   const [warnings, setWarnings] = useState([]);
+  const [productNames, setProductNames] = useState({});
+  const [roomNames, setRoomNames] = useState({});
   const navigate = useNavigate();
   const [reservas, setReservas] = useState([]);
+  const [reservasRooms, setReservasRooms] = useState([]);
+
+  async function getName(id) {
+    const res = await fetch(`http://localhost:8000/api/products/${id}`);
+    const data = await res.json();
+    return data.name;
+  }
+
+  async function getNameRoom(id) {
+    const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+    const data = await res.json();
+    return data.name;
+  }
+
+
 
   useEffect(() => {
     async function fetchReservas() {
@@ -44,6 +61,23 @@ export default function PerfilUsuario() {
       fetchReservas();
     }
   }, [user]);
+
+   useEffect(() => {
+    async function fetchReservasRooms() {
+      try {
+        const res = await fetch(`http://localhost:8000/api/reservas/salones/${user.email}`);
+        const data = await res.json();
+        setReservasRooms(data);
+      } catch (err) {
+        console.error("Error cargando reservas:", err);
+      }
+    }
+
+    if (user?.email) {
+      fetchReservasRooms();
+    }
+  }, [user]);
+
 
   useEffect(() => {
     async function fetchWarnings() {
@@ -65,6 +99,48 @@ export default function PerfilUsuario() {
       fetchWarnings();
     }
   }, [user]);
+
+  useEffect(() => {
+    async function loadNames() {
+      const names = {};
+
+      for (const item of reservas) {
+        if (!productNames[item.productId]) {
+          const name = await getName(item.productId);
+          names[item.productId] = name;
+        }
+      }
+
+      if (Object.keys(names).length > 0) {
+        setProductNames(prev => ({ ...prev, ...names }));
+      }
+    }
+
+    if (reservas.length > 0) {
+      loadNames();
+    }
+  }, [reservas]);
+
+  useEffect(() => {
+    async function loadNamesR() {
+      const names = {};
+
+      for (const item of reservasRooms) {
+        if (!roomNames[item.roomId]) {
+          const name = await getNameRoom(item.roomId);
+          names[item.roomId] = name;
+        }
+      }
+
+      if (Object.keys(names).length > 0) {
+        setRoomNames(prev => ({ ...prev, ...names }));
+      }
+    }
+
+    if (reservasRooms.length > 0) {
+      loadNamesR();
+    }
+  }, [reservasRooms]);
 
 
   const handleGoHome = () => {
@@ -356,7 +432,7 @@ export default function PerfilUsuario() {
                       borderLeft: "4px solid #7aa0ff",
                     }}
                   >
-                    <Typography fontWeight="600">{r.description}</Typography>
+                    <Typography fontWeight="600">{productNames[r.productId] || "Cargando..."}</Typography>
 
                     <Typography>Fecha inicio: {new Date(r.dateStart).toLocaleDateString()}</Typography>
                     <Typography>Fecha fin: {new Date(r.dateEnd).toLocaleDateString()}</Typography>
@@ -375,7 +451,34 @@ export default function PerfilUsuario() {
             <AccordionSummary expandIcon={<AddIcon />}>
               <Typography fontWeight="500">Salones</Typography>
             </AccordionSummary>
-          </Accordion>
+          
+           <AccordionDetails>
+              {reservasRooms.length === 0 ? (
+                <Typography color="gray">No tienes reservas aún.</Typography>
+              ) : (
+                reservasRooms.map((r) => (
+                  <Box
+                    key={r._id}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: "8px",
+                      bgcolor: "#eef2ff",
+                      borderLeft: "4px solid #7aa0ff",
+                    }}
+                  >
+                    <Typography fontWeight="600">{roomNames[r.roomId] || "Cargando..."}</Typography>
+
+                    <Typography>Fecha inicio: {new Date(r.dateStart).toLocaleDateString()}</Typography>
+                    <Typography>Fecha fin: {new Date(r.dateEnd).toLocaleDateString()}</Typography>
+                    <Typography sx={{ mt: 1 }}>
+                      Estado: <b>{r.status}</b>
+                    </Typography>
+                  </Box>
+                ))
+              )}
+            </AccordionDetails>
+            </Accordion>
 
           <Accordion disableGutters>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
