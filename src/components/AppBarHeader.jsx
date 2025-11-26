@@ -12,7 +12,7 @@ export default function AppBarHeader() {
   };
 
   return (
-    <AppBar position="static" sx={{ bgcolor: '#b4893e', boxShadow: 'none' }}>
+    <AppBar position="sticky" sx={{ bgcolor: '#b4893e', boxShadow: 'none' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <SearchIcon sx={{ mr: 1 }} />
