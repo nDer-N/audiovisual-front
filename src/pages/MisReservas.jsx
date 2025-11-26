@@ -15,6 +15,7 @@ export default function MisReservas({ catal, cotol }) {
   const cancelarReserva = (id) => {
     const confirmacion = window.confirm("¿Estás seguro de que quieres cancelar la reserva?");
     if (!confirmacion) return;
+    console.log(reser);
     setReser(prev => prev.filter(r => r.id !== id));
     console.log(reservacionProducto);
   };
@@ -44,9 +45,9 @@ export default function MisReservas({ catal, cotol }) {
         ) : (
           <Grid container spacing={6} justifyContent="center">
             {reservacionProducto.map((item) => (
-              <Grid container item key={item.id} sx={{ maxWidth: 900 }}>
-                
-                {/* Imagen }
+              <Grid container item key={item.object._id} sx={{ maxWidth: 900 }}>
+
+                {/* Imagen */}
                 <Grid item >
                   <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
                     <CardMedia
@@ -65,27 +66,27 @@ export default function MisReservas({ catal, cotol }) {
 
                       {/* Nombre */}
                       <Typography variant="h5" fontWeight="bold" mb={1}>
-                        {item.name}
+                        {item.object.name}
                       </Typography>
 
                       {/* Descripcion */}
                       <Typography variant="body1" color="text.secondary" mb={1}>
-                        {item.description}
+                        {item.object.description}
                       </Typography>
 
                       {/* Solo sale la cantidad si no es Salon */}
                       {!item.isRoom && (
                         <Typography variant="body1" mb={1}>
-                          <strong>Cantidad:</strong> {item.quantity}
+                          <strong>Cantidad:</strong> {item.object.quantity}
                         </Typography>
                       )}
 
                       {/* Fecha */}
                       <Typography variant="body1">
-                        <strong>Fecha reservada:</strong> {item.day}/{item.month}/{item.year}
+                        <strong>Fecha reservada:</strong> {item.dateStart}
                       </Typography>
                       <Typography variant="body1">
-                        <strong>Fecha de Entrega:</strong> {item.finalday}/{item.finalmonth}/{item.finalyear}
+                        <strong>Fecha de Entrega:</strong> {item.dateEnd}
                       </Typography>
 
                       {/* Estado de la peticion */}
