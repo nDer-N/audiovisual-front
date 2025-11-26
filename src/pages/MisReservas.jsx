@@ -1,132 +1,181 @@
-import React from "react";
-import { Box, Card, CardContent, CardMedia, Typography, Button, Grid } from "@mui/material";
-import App from "../App";
+import { useEffect, useState } from "react";
+import { Box, Grid, Card, CardContent, Typography } from "@mui/material";
+import { getreservasProducto } from "./reservacionProducto";
 import { useAppContext } from "../context/AppContext";
-import { reservacionProducto } from "./reservacionProducto";
 
-export default function MisReservas({ catal, cotol }) {
-  const { reser, setReser } = useAppContext();
-  const actualizarEstado = (id, nuevoStatus) => {
-    setReser(prev =>
-      prev.map(r => (r.id === id ? { ...r, status: nuevoStatus } : r))
-    );
-  };
+export default function ReservasSalon() {
 
-  const cancelarReserva = (id) => {
-    const confirmacion = window.confirm("¿Estás seguro de que quieres cancelar la reserva?");
-    if (!confirmacion) return;
-    console.log(reser);
-    setReser(prev => prev.filter(r => r.id !== id));
-    console.log(reservacionProducto);
-  };
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "aceptada":
-        return "#4caf50";
-      case "rechazada":
-        return "#d32f2f";
-      default:
-        return "#ffb300";
+  const { user } = useAppContext();
+  const [reservasProducto, setReservasProducto] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [productNames, setProductNames] = useState({});
+  const [productImgs, setProductImgs] = useState({});
+
+  async function getNameProduct(id) {
+    try {
+      const res = await fetch(`http://localhost:8000/api/products/${id}`);
+
+      if (!res.ok) return "Producto no encontrado";
+
+      const data = await res.json();
+      return data?.name || "Producto desconocido";
+
+    } catch {
+      return "Error al cargar el producto";
     }
-  };
+  }
+
+  async function getImgProduct(id) {
+    try {
+      const res = await fetch(`http://localhost:8000/api/products/${id}`);
+
+      if (!res.ok) return "";
+
+      const data = await res.json();
+      return data?.img || "";
+
+    } catch {
+      return "";
+    }
+  }
+
+  useEffect(() => {
+    async function loadNames() {
+      const names = {};
+
+      for (const item of reservasProducto) {
+        if (!productNames[item.productId]) {
+          const name = await getNameProduct(item.productId);
+          names[item.productId] = name;
+        }
+      }
+
+      if (Object.keys(names).length > 0) {
+        setProductNames(prev => ({ ...prev, ...names }));
+      }
+    }
+
+    if (reservasProducto.length > 0) {
+      loadNames();
+    }
+  }, [reservasProducto]);
+
+  useEffect(() => {
+    async function loadImgs() {
+      const imgs = {};
+
+      for (const item of reservasProducto) {
+        if (!productImgs[item.productId]) {
+          const img = await getImgProduct(item.productId);
+          imgs[item.productId] = img;
+        }
+      }
+
+      if (Object.keys(imgs).length > 0) {
+        setProductImgs(prev => ({ ...prev, ...imgs }));
+      }
+    }
+
+    if (reservasProducto.length > 0) {
+      loadImgs();
+    }
+  }, [reservasProducto]);
+
+  useEffect(() => {
+    async function cargarReservas() {
+      try {
+        if (!user) return;
+
+        const data = await getreservasProducto(user.email);
+        setReservasProducto(data);
+      } catch (error) {
+        console.error("Error al cargar reservas:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    cargarReservas();
+  }, [user]);
+
+  if (loading) {
+    return <Typography textAlign="center" mt={4}>Cargando reservas...</Typography>;
+  }
 
   return (
-    <Box
-      p={4}
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}
-    >
-      <Box sx={{ width: "85%", bgcolor: "#eee9df", borderRadius: 3, p: 4, boxShadow: 3 }}>
+    <Box p={4} sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ width: "85%", bgcolor: "#eee9df", borderRadius: 3, p: 4 }}>
 
-        {/* Si no hay reservas */}
-        {reservacionProducto.length === 0 ? (
+        {reservasProducto.length === 0 ? (
           <Typography variant="h5" textAlign="center" mt={4}>
             No tienes ninguna reserva.
           </Typography>
         ) : (
-          <Grid container spacing={6} justifyContent="center">
-            {reservacionProducto.map((item) => (
-              <Grid container item key={item.object._id} sx={{ maxWidth: 900 }}>
+          <Grid container spacing={4} justifyContent="center">
+            {reservasProducto.map((item) => (
+              <Grid item key={item._id} xs={12} md={8}>
+                <Card sx={{ p: 2, borderRadius: 3 }}>
+                  <CardContent>
 
-                {/* Imagen */}
-                <Grid item >
-                  <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-                    <CardMedia
-                      component="img"
-                      image={item.image}
-                      alt={item.name}
-                      sx={{ height: 280, objectFit: "contain", p: 1, minHeight: 400, width: 400 }}
-                    />
-                  </Card>
-                </Grid>
+                    {/* GRID PARA IMAGEN + TEXTO */}
+                    <Grid container spacing={2} alignItems="center">
 
-                {/* Información */}
-                <Grid item >
-                  <Card sx={{ p: 2, borderRadius: 3 }}>
-                    <CardContent>
+                      {/* IMAGEN DEL PRODUCTO */}
+                      <Grid item xs={12} sm={4}>
+                        <img
+                          src={productImgs[item.productId]}
+                          alt={productNames[item.productId]}
+                          style={{
+                            width: "100%",
+                            height: "150px",
+                            objectFit: "cover",
+                            borderRadius: "10px"
+                          }}
+                        />
+                      </Grid>
 
-                      {/* Nombre */}
-                      <Typography variant="h5" fontWeight="bold" mb={1}>
-                        {item.object.name}
-                      </Typography>
-
-                      {/* Descripcion */}
-                      <Typography variant="body1" color="text.secondary" mb={1}>
-                        {item.object.description}
-                      </Typography>
-
-                      {/* Solo sale la cantidad si no es Salon */}
-                      {!item.isRoom && (
-                        <Typography variant="body1" mb={1}>
-                          <strong>Cantidad:</strong> {item.object.quantity}
+                      {/* INFORMACIÓN */}
+                      <Grid item xs={12} sm={8}>
+                        <Typography variant="h5" fontWeight="bold" mb={1}>
+                          {productNames[item.productId] || "Cargando..."}
                         </Typography>
-                      )}
 
-                      {/* Fecha */}
-                      <Typography variant="body1">
-                        <strong>Fecha reservada:</strong> {item.dateStart}
-                      </Typography>
-                      <Typography variant="body1">
-                        <strong>Fecha de Entrega:</strong> {item.dateEnd}
-                      </Typography>
+                        <Typography variant="body1" mb={1}>
+                          <strong>Inicio:</strong>{" "}
+                          {new Date(item.dateStart).toLocaleString()}
+                        </Typography>
 
-                      {/* Estado de la peticion */}
-                      <Typography
-                        sx={{
-                          mt: 2,
-                          fontWeight: "bold",
-                          color: getStatusColor(item.status),
-                          fontSize: "1.1rem"
-                        }}
-                      >
-                        Estado: {item.status}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                        <Typography variant="body1" mb={1}>
+                          <strong>Fin:</strong>{" "}
+                          {new Date(item.dateEnd).toLocaleString()}
+                        </Typography>
 
-                {/* Botón cancelar */}
-                <Grid textAlign="center" display="flex" alignItems="center">
-                  <Button
-                    variant="contained"
-                    onClick={() => cancelarReserva(item.id)}
-                    sx={{
-                      bgcolor: "#e8a6a6",
-                      color: "#8c0000",
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      fontSize: "1rem",
-                      "&:hover": { bgcolor: "#d98d8d" },
-                    }}
-                  >
-                    Cancelar reserva
-                  </Button>
-                </Grid>
+                        <Typography variant="body1" mb={1}>
+                          <strong>Cantidad:</strong> {item.quantity}
+                        </Typography>
 
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color:
+                              item.status === "accepted"
+                                ? "green"
+                                : item.status === "proceso"
+                                  ? "orange"
+                                  : "red",
+                          }}
+                        >
+                          Estado: {item.status}
+                        </Typography>
+                      </Grid>
+
+                    </Grid>
+
+                  </CardContent>
+                </Card>
               </Grid>
             ))}
           </Grid>
-
         )}
       </Box>
     </Box>

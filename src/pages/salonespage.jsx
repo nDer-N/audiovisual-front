@@ -205,16 +205,40 @@ export default function SalonesPage({ cotol }) {
                                 onChange={async (value) => {
                                     const start = normalizeUTC(value[0]);
                                     const end = normalizeUTC(value[1]);
+                                    const hoy = normalizeUTC(new Date());
 
+                                    if (start && !end) {
+                                        if (start < hoy) {
+                                            alert("No puedes seleccionar una fecha de inicio anterior a hoy.");
+                                            return;
+                                        }
+
+                                        setSelectedDate(start);
+                                        setFinalDay(null);
+                                        return;
+                                    }
+                                    if (start && end) {
+
+                                        if (start < hoy) {
+                                            alert("La fecha inicial no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
+
+                                        if (end < hoy) {
+                                            alert("La fecha final no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
                                     setSelectedDate(start);
                                     setFinalDay(end);
-                                     
-
                                     const overlap = await getReservations(salones._id, start, end);
 
                                     console.log("Reservas:", overlap);
                                     const total = overlap.length;
-                                    
+
                                     if (total > 0) {
                                         setAvailable(0);
                                     } else {
@@ -222,7 +246,7 @@ export default function SalonesPage({ cotol }) {
                                     }
 
                                     setErrorDisponibilidad(false);
-
+                                }
 
 
                                 }}

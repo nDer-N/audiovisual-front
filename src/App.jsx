@@ -128,7 +128,7 @@ export default function App() {
             <Route path="/mis-reservas-productos" element={<MisReservas catal={catal} cotol={cotol}/>} />
             <Route path="/mis-reservas-salones" element={<FiltroSalon catal={catal} cotol={cotol}/>} />
             <Route path="/producto/:id" element={<Itempage catal={catal} />} />
-            <Route path="/confirmacion/:id" element={<ConfirmationPage />} />
+            <Route path="/confirmacion/:id" element={<ConfirmationPage catal = {catal}/>} />
             <Route path="/gestionar-equipo" element={<EquipmentAdmin catal={catal} setCatal={setCatal} />} />
             <Route path="/detalle-equipo/:id" element={<DetalleAdmin catal={catal} />} />
             <Route path="/edicion/:id" element={<EditarEquipo catal={catal} setCatal={setCatal} />} />
