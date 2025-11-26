@@ -1,13 +1,13 @@
 import React from 'react'
 import { useParams } from "react-router-dom";
 import { Grid, Box, Typography, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
-import salones from './salones';
+
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
 
-export default function ConfirmarSalon() {
+export default function ConfirmarSalon({cotol}) {
     const { id } = useParams();
-    const salon = salones.find((p) => p.id === Number(id));
+    const salon = cotol.find((p) => p._id === id);
     const navigate = useNavigate();
     const { reser } = useAppContext();
     console.log(reser);

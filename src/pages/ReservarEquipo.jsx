@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Grid, Card, CardActionArea, CardMedia, CardContent } from '@mui/material';
 
 import { useNavigate } from 'react-router';
-import productos from './productos';
+
 import App from '../App';
 
 
@@ -23,7 +23,7 @@ export default function ReservarEquipo({catal}) {
       sx={{ padding: "20px" }}
     >
       {catal.map((pro) => (
-        <Grid key={pro.id}>
+        <Grid key={pro._id}>
           <Card
             sx={{
               borderRadius: 3,
@@ -32,7 +32,7 @@ export default function ReservarEquipo({catal}) {
               backgroundColor: "#f4f0e8"
             }}
           >
-            <CardActionArea onClick={() => handleClick(pro.id)}>
+            <CardActionArea onClick={() => handleClick(pro._id)}>
               <CardMedia
                 component="img"
                 height="420"

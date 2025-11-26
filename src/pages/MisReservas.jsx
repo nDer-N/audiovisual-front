@@ -14,6 +14,7 @@ export default function MisReservas({ catal, cotol }) {
   const cancelarReserva = (id) => {
     const confirmacion = window.confirm("¿Estás seguro de que quieres cancelar la reserva?");
     if (!confirmacion) return;
+    console.log(reser);
     setReser(prev => prev.filter(r => r.id !== id));
     console.log(reser);
   };

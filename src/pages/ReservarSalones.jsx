@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Grid, Card, CardActionArea, CardMedia, CardContent } from '@mui/material';
 
 import { useNavigate } from 'react-router';
-import salon from './salones';
+
 import App from '../App';
 
 
@@ -11,8 +11,8 @@ import App from '../App';
 export default function ReservarSalones({cotol}) {
   const navigate = useNavigate();
 
-  const handleClick = (id) => {
-    navigate(`/salon/${id}`);
+  const handleClick = (_id) => {
+    navigate(`/salon/${_id}`);
   };
 
   return (
@@ -23,7 +23,7 @@ export default function ReservarSalones({cotol}) {
       sx={{ padding: "20px" }}
     >
       {cotol.map((sal) => (
-        <Grid key={sal.id}>
+        <Grid key={sal._id}>
           <Card
             sx={{
               borderRadius: 3,
@@ -32,7 +32,7 @@ export default function ReservarSalones({cotol}) {
               backgroundColor: "#f4f0e8"
             }}
           >
-            <CardActionArea onClick={() => handleClick(sal.id)}>
+            <CardActionArea onClick={() => handleClick(sal._id)}>
               <CardMedia
                 component="img"
                 height="420"

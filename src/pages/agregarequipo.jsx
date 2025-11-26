@@ -1,46 +1,47 @@
-import React from 'react'
-import { useState } from "react";
-import { Box, Paper, Typography, TextField } from "@mui/material";
-import { Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Paper, Typography, TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router';
-import { useAppContext } from '../context/AppContext';
+
 export default function AgregarEquipo() {
   const navigate = useNavigate();
-  const { setNuevoProducto } = useAppContext();
+
   const [agregarnombre, setAgregarNombre] = useState("");
   const [agregardescripcion, setAgregarDescripcion] = useState("");
   const [agregarCantidad, setAgregarCantidad] = useState(1);
-  const [agregarimagen, setAgregarImagen] = useState(null);
-  const [previewimagen, setPreviewImagen] = useState(null);
-  const [agregarid, setAgregarId] = useState("");
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAgregarImagen(file);
+  const [agregarimagen, setAgregarImagen] = useState("");
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImagen(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  const handleGuardar = () => {
-    if (!agregarid || !agregarnombre || !agregardescripcion || !agregarCantidad || !agregarimagen) {
+  const handleGuardar = async () => {
+    if (!agregarnombre || !agregardescripcion || !agregarCantidad || !agregarimagen) {
       alert("Por favor completa todos los campos.");
       return;
     }
 
     const nuevoproducto = {
-      id: Number(agregarid),
       name: agregarnombre,
       description: agregardescripcion,
       quantity: Number(agregarCantidad),
-      image: previewimagen,
+      img: agregarimagen, // ahora es URL, no base64
     };
 
-    setNuevoProducto(nuevoproducto);
-    navigate("/gestionar-equipo");
+    try {
+      const res = await fetch("http://localhost:8000/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nuevoproducto),
+      });
+
+      const data = await res.json();
+      console.log("Producto guardado:", data);
+
+      alert("Producto agregado correctamente");
+      navigate("/gestionar-equipo");
+
+    } catch (error) {
+      console.error("Error al guardar producto:", error);
+      alert("Hubo un error al guardar el producto.");
+    }
   };
 
   return (
@@ -68,22 +69,6 @@ export default function AgregarEquipo() {
           Agregar Producto al Catálogo
         </Typography>
 
-        {/* ID */}
-        <TextField
-          label="ID del producto"
-          variant="outlined"
-          fullWidth
-          value={agregarid}
-          onChange={(e) => {
-            const value = e.target.value;
-            if (/^\d*$/.test(value)) {
-              setAgregarId(value);
-            }
-          }}
-          sx={{ mb: 2 }}
-        />
-
-        {/* Nombre */}
         <TextField
           label="Nombre del producto"
           variant="outlined"
@@ -93,7 +78,6 @@ export default function AgregarEquipo() {
           sx={{ mb: 2 }}
         />
 
-        {/* Descripción */}
         <TextField
           label="Descripción"
           variant="outlined"
@@ -105,7 +89,6 @@ export default function AgregarEquipo() {
           sx={{ mb: 2 }}
         />
 
-        {/* Cantidad */}
         <TextField
           label="Cantidad disponible"
           type="number"
@@ -116,36 +99,30 @@ export default function AgregarEquipo() {
           sx={{ mb: 3 }}
         />
 
-        {/* Imagen */}
-        <Typography fontWeight="bold" sx={{ mb: 1 }}>
-          Imagen del producto:
-        </Typography>
-        <Button variant="contained" component="label" sx={{ mb: 2 }}>
-          Subir imagen
-          <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
-        </Button>
+        <TextField
+          label="URL de la imagen"
+          variant="outlined"
+          fullWidth
+          value={agregarimagen}
+          onChange={(e) => setAgregarImagen(e.target.value)}
+          sx={{ mb: 2 }}
+        />
 
-        {previewimagen && (
-          <Box
-            sx={{
-              mt: 2,
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
+        {agregarimagen && (
+          <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
             <img
-              src={previewimagen}
+              src={agregarimagen}
               alt="preview"
               style={{
                 width: "300px",
                 borderRadius: "10px",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
               }}
+              onError={(e) => { e.target.style.display = "none"; }}
             />
           </Box>
         )}
 
-        {/* Botón Guardar */}
         <Button
           variant="contained"
           color="success"

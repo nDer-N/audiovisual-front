@@ -12,8 +12,8 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 export default function SalonesPage({ cotol }) {
-    const { id } = useParams();
-    const salones = cotol.find((p) => p.id === Number(id));
+   const { id } = useParams();
+    const salones = cotol.find((p) => p._id === id);
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [finalDay, setFinalDay] = useState(null);
@@ -152,7 +152,7 @@ export default function SalonesPage({ cotol }) {
                                 const mesfinal = finalDay.getMonth() + 1;
                                 const añofinal = finalDay.getFullYear();
                                 agregarReserva({
-                                    id: salones.id,
+                                    id: salones._id,
                                     date: selectedDate,
                                     finaldate: finalDay,
                                     day: dia,
