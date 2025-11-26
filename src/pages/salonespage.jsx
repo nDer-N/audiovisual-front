@@ -24,6 +24,8 @@ export default function SalonesPage({ cotol }) {
     const { user, setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion-del-salon/${id}`);
+        console.log(selectedDate);
+        console.log(finalDay);
     };
     const agregarReserva = (nueva) => {
         setReser(prev => {
@@ -183,8 +185,40 @@ export default function SalonesPage({ cotol }) {
                             <Calendar
                                 selectRange={true}
                                 onChange={(value) => {
-                                    setSelectedDate(new Date(value[0]));
-                                    setFinalDay(new Date(value[1]));
+                                    const start = value[0] ? new Date(value[0]) : null;
+                                    const end = value[1] ? new Date(value[1]) : null;
+
+                                    const hoy = new Date();
+                                    hoy.setHours(0, 0, 0, 0);
+                                    if (start && !end) {
+                                        if (start < hoy) {
+                                            alert("No puedes seleccionar una fecha de inicio anterior a hoy.");
+                                            return;
+                                        }
+
+                                        setSelectedDate(start);
+                                        setFinalDay(null);
+                                        return;
+                                    }
+                                    if (start && end) {
+
+                                        if (start < hoy) {
+                                            alert("La fecha inicial no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
+
+                                        if (end < hoy) {
+                                            alert("La fecha final no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
+                                        setSelectedDate(start);
+                                        setFinalDay(end);
+                                        return;
+                                    }
                                 }}
                                 value={[selectedDate || null, finalDay || null]}
                             />

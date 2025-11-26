@@ -29,6 +29,7 @@ export default function Itempage({ catal }) {
     const { user, setReser } = useAppContext();
     const handleClick = (id) => {
         navigate(`/confirmacion/${id}`);
+        console.log(selectedDate);
         console.log(finalDay);
     };
     const agregarReserva = (nueva) => {
@@ -38,7 +39,8 @@ export default function Itempage({ catal }) {
                 r.day === nueva.day &&
                 r.month === nueva.month &&
                 r.year === nueva.year &&
-                r.user === nueva.user
+                r.user === nueva.user &&
+                r.date.getTime() === selectedDate.getTime()
             );
 
             if (existente) {
@@ -48,7 +50,14 @@ export default function Itempage({ catal }) {
                         r.day === nueva.day &&
                         r.month === nueva.month &&
                         r.year === nueva.year
-                        ? { ...r, quantity: r.quantity + nueva.quantity }
+                        ? {
+                            ...r, 
+                            quantity: r.quantity + nueva.quantity, 
+                            finaldate: nueva.finaldate,
+                            finalday: nueva.finalday,
+                            finalmonth: nueva.finalmonth,
+                            finalyear: nueva.finalyear
+                        }
                         : r
                 );
             }
@@ -208,8 +217,40 @@ export default function Itempage({ catal }) {
                             <Calendar
                                 selectRange={true}
                                 onChange={(value) => {
-                                    setSelectedDate(new Date(value[0]));
-                                    setFinalDay(new Date(value[1]));
+                                    const start = value[0] ? new Date(value[0]) : null;
+                                    const end = value[1] ? new Date(value[1]) : null;
+
+                                    const hoy = new Date();
+                                    hoy.setHours(0, 0, 0, 0);
+                                    if (start && !end) {
+                                        if (start < hoy) {
+                                            alert("No puedes seleccionar una fecha de inicio anterior a hoy.");
+                                            return;
+                                        }
+
+                                        setSelectedDate(start);
+                                        setFinalDay(null);
+                                        return;
+                                    }
+                                    if (start && end) {
+
+                                        if (start < hoy) {
+                                            alert("La fecha inicial no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
+
+                                        if (end < hoy) {
+                                            alert("La fecha final no puede ser anterior a hoy.");
+                                            setSelectedDate(null);
+                                            setFinalDay(null);
+                                            return;
+                                        }
+                                        setSelectedDate(start);
+                                        setFinalDay(end);
+                                        return;
+                                    }
                                 }}
                                 value={[selectedDate || null, finalDay || null]}
                             />
