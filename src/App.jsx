@@ -33,6 +33,8 @@ import PeticionesProductos from "./pages/peticionesproductos";
 import PeticionesSalones from "./pages/peticionessalones";
 import Profiles from "./pages/profiles";
 import InformProfiles from "./pages/informprofiles";
+import SeleccionCarro from "./pages/seleccioncarro";
+import FiltroSalon from "./pages/filtrosalon";
 
 import Usuario from "./pages/Usuario"; //  <<--- IMPORTANTE
 
@@ -68,7 +70,9 @@ export default function App() {
             <Route path="/gestionar-salones" element={<SalonesAdmin cotol={cotol} setCotol={setCotol} />} />
             <Route path="/agregar-salones" element={<AgregarSalon cotol={cotol} setCotol={setCotol} />} />
             <Route path="/detalle-salon/:id" element={<DetalleSalonAdmin cotol={cotol} />} />
-            <Route path="/mis-reservas" element={<MisReservas catal={catal} cotol={cotol}/>} />
+            <Route path="/mis-reservas" element={<SeleccionCarro catal={catal} cotol={cotol}/>} />
+            <Route path="/mis-reservas-productos" element={<MisReservas catal={catal} cotol={cotol}/>} />
+            <Route path="/mis-reservas-salones" element={<FiltroSalon catal={catal} cotol={cotol}/>} />
             <Route path="/producto/:id" element={<Itempage catal={catal} />} />
             <Route path="/confirmacion/:id" element={<ConfirmationPage />} />
             <Route path="/gestionar-equipo" element={<EquipmentAdmin catal={catal} setCatal={setCatal} />} />

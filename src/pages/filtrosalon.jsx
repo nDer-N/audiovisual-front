@@ -2,10 +2,12 @@ import React from "react";
 import { Box, Card, CardContent, CardMedia, Typography, Button, Grid } from "@mui/material";
 import App from "../App";
 import { useAppContext } from "../context/AppContext";
-import { reservacionProducto } from "./reservacionProducto";
+import { reservacionSalon } from "./reservacionSalon";
 
-export default function MisReservas({ catal, cotol }) {
+
+export default function FiltroSalon({ catal, cotol }) {
   const { reser, setReser } = useAppContext();
+  
   const actualizarEstado = (id, nuevoStatus) => {
     setReser(prev =>
       prev.map(r => (r.id === id ? { ...r, status: nuevoStatus } : r))
@@ -16,7 +18,7 @@ export default function MisReservas({ catal, cotol }) {
     const confirmacion = window.confirm("¿Estás seguro de que quieres cancelar la reserva?");
     if (!confirmacion) return;
     setReser(prev => prev.filter(r => r.id !== id));
-    console.log(reservacionProducto);
+    console.log(reservacionSalon);
   };
   const getStatusColor = (status) => {
     switch (status) {
@@ -37,15 +39,15 @@ export default function MisReservas({ catal, cotol }) {
       <Box sx={{ width: "85%", bgcolor: "#eee9df", borderRadius: 3, p: 4, boxShadow: 3 }}>
 
         {/* Si no hay reservas */}
-        {reservacionProducto.length === 0 ? (
+        {reservacionSalon.length === 0 ? (
           <Typography variant="h5" textAlign="center" mt={4}>
             No tienes ninguna reserva.
           </Typography>
         ) : (
           <Grid container spacing={6} justifyContent="center">
-            {reservacionProducto.map((item) => (
+            {reservacionSalon.map((item) => (
               <Grid container item key={item.id} sx={{ maxWidth: 900 }}>
-                
+
                 {/* Imagen }
                 <Grid item >
                   <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
@@ -56,7 +58,7 @@ export default function MisReservas({ catal, cotol }) {
                       sx={{ height: 280, objectFit: "contain", p: 1, minHeight: 400, width: 400 }}
                     />
                   </Card>
-                </Grid>
+                </Grid>*/}
 
                 {/* Información */}
                 <Grid item >
