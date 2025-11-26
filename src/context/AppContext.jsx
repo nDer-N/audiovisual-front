@@ -1,5 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import Equipo from "../images/Equipo.jpg"
+import Salones from "../images/Salones.jpeg"
+import Banner from "../images/Banner.jpg"
+import Reservas from "../images/Reservas.jpg"
+import Peticiones from "../images/Peticiones.jpg"
+import Perfiles from "../images/Perfiles.png"
+import FAQs from "../images/FAQs.png"
 
 const AppContext = createContext();
 
@@ -44,7 +51,7 @@ export const AppProvider = ({ children }) => {
       setUser(processedUser);
 
       // Validar si es admin (email o claim)
-      const adminEmails = ["admin@up.edu.mx", ];
+      const adminEmails = ["admin@up.edu.mx", "0262371@up.edu.mx"];
 
       const userIsAdmin =
         adminEmails.includes(auth0User.email) ||
@@ -78,7 +85,14 @@ export const AppProvider = ({ children }) => {
         nuevoproducto,
         setNuevoProducto,
         nuevosalon,
-        setNuevoSalon
+        setNuevoSalon,
+        Equipo, 
+        Salones,
+        Banner,
+        Perfiles,
+        FAQs,
+        Reservas,
+        Peticiones
       }}
     >
       {children}
