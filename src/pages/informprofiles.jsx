@@ -118,31 +118,6 @@ export default function PerfilUsuario({ users }) {
                     >
                         {userQ.name}
                     </Typography>
-
-                    {/* Equipos */}
-                    <Accordion sx={{ mt: 3, bgcolor: "#f8f4ef" }}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography variant="h6">Equipos</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography sx={{ color: "gray" }}>
-                                Especificaciones generales.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-
-                    {/* Salones */}
-                    <Accordion sx={{ mt: 2, bgcolor: "#f8f4ef" }}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography variant="h6">Salones</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography sx={{ color: "gray" }}>
-                                Información sobre reservas de salones.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-
                     {/* Advertencias */}
                     <Box
                         sx={{
