@@ -1,14 +1,14 @@
 import React from 'react'
 import { useParams } from "react-router-dom";
 import { Grid, Box, Typography, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
-import productos from './productos';
+
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
 
 
-export default function ConfirmationPage() {
+export default function ConfirmationPage({catal}) {
     const { id } = useParams();
-    const producto = productos.find((p) => p.id === Number(id));
+    const producto = catal.find((p) => p._id === id);
     const navigate = useNavigate();
     const { reser } = useAppContext();
     console.log(reser);

@@ -1,12 +1,14 @@
 import React from "react";
 import { Box, Grid, Typography, Card, CardActionArea } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import users from "../pages/users"; // importa el archivo users.js
+import {useState, useEffect} from 'react';
+ // importa el archivo users.js
 
-export default function Profiles() {
+export default function Profiles({users}) {
+   
     const navigate = useNavigate();
     const handleClick = (id) => {
-    navigate(`/informacio-de-los-perfiles/${id}`);
+    navigate(`/informacion-de-los-perfiles/${id}`);
   };
 
     return (
@@ -22,7 +24,7 @@ export default function Profiles() {
             <Box sx={{ width: "70%" }}>
                 <Grid container direction="column" spacing={3}>
                     {users.map((user) => (
-                        <Grid key={user.id}>
+                        <Grid key={user._id}>
                             <Card
                                 sx={{
                                     display: "flex",
@@ -39,12 +41,12 @@ export default function Profiles() {
                                         py: 2,
                                         px: 2
                                     }}
-                                    onClick={() => handleClick(user.id)}
+                                    onClick={() => handleClick(user._id)}
                                 >
                                     {/* Imagen del usuario */}
                                     <Box
                                         component="img"
-                                        src={user.image}
+                                        src={user.img}
                                         alt={user.name}
                                         sx={{
                                             width: 70,

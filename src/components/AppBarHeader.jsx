@@ -24,7 +24,7 @@ export default function AppBarHeader() {
             onClick={handleAvatarClick}
             sx={{ bgcolor: 'white', color: '#b4893e', cursor: 'pointer' }}
             alt={user?.name}
-            src={user?.picture}
+            src={user?.img}
           />
         ) : (
           <Avatar

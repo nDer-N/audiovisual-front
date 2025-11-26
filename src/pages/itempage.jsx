@@ -17,7 +17,8 @@ import "react-calendar/dist/Calendar.css";
 
 export default function Itempage({ catal }) {
     const { id } = useParams();
-    const producto = catal.find((p) => p.id === Number(id));
+    const producto = catal.find(p => p._id === id);
+    console.log(producto);
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [finalDay, setFinalDay] = useState(null);
@@ -176,7 +177,7 @@ export default function Itempage({ catal }) {
                                 const mesfinal = finalDay.getMonth() + 1;
                                 const añofinal = finalDay.getFullYear();
                                 agregarReserva({
-                                    id: producto.id,
+                                    id: producto._id,
                                     date: selectedDate,
                                     finaldate: finalDay,
                                     quantity: cantida,
